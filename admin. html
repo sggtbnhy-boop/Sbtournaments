@@ -1,1 +1,770 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
 
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>SB Tournament - Admin</title>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial,sans-serif;
+}
+
+body{
+    background:#080d1c;
+    color:white;
+}
+
+/* Header */
+
+header{
+    background:#111936;
+    padding:18px;
+    text-align:center;
+}
+
+header h1{
+    color:#00e5ff;
+    font-size:25px;
+}
+
+header p{
+    color:#aaa;
+    margin-top:5px;
+}
+
+/* Container */
+
+.container{
+    width:94%;
+    max-width:1000px;
+    margin:25px auto;
+}
+
+/* Login */
+
+.login-box{
+    max-width:450px;
+    margin:40px auto;
+    background:#121a35;
+    border:1px solid #25315b;
+    border-radius:15px;
+    padding:25px;
+}
+
+.login-box h2{
+    text-align:center;
+    color:#00e5ff;
+    margin-bottom:20px;
+}
+
+label{
+    display:block;
+    margin:13px 0 7px;
+    color:#ddd;
+}
+
+input{
+    width:100%;
+    padding:13px;
+    border:0;
+    outline:0;
+    border-radius:9px;
+    background:#252e4d;
+    color:white;
+}
+
+button{
+    width:100%;
+    padding:13px;
+    margin-top:18px;
+    border:0;
+    border-radius:9px;
+    background:#00e5ff;
+    color:#061018;
+    font-size:16px;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+.error{
+    display:none;
+    margin-top:12px;
+    padding:10px;
+    border-radius:8px;
+    background:#421b1b;
+    color:#ff7777;
+    text-align:center;
+}
+
+/* Admin */
+
+#adminPanel{
+    display:none;
+}
+
+.dashboard-title{
+    text-align:center;
+    color:#00e5ff;
+    margin-bottom:20px;
+}
+
+/* Stats */
+
+.stats{
+    display:grid;
+    grid-template-columns:
+    repeat(auto-fit,minmax(180px,1fr));
+    gap:15px;
+}
+
+.stat{
+    background:#121a35;
+    border:1px solid #25315b;
+    border-radius:14px;
+    padding:20px;
+    text-align:center;
+}
+
+.stat h3{
+    color:#aaa;
+    font-size:15px;
+}
+
+.stat p{
+    color:#00e5ff;
+    font-size:30px;
+    font-weight:bold;
+    margin-top:8px;
+}
+
+/* Registration */
+
+.registrations{
+    margin-top:25px;
+    background:#121a35;
+    border:1px solid #25315b;
+    border-radius:15px;
+    padding:20px;
+}
+
+.registrations h2{
+    color:#00e5ff;
+    margin-bottom:15px;
+}
+
+.registration{
+    background:#1b2545;
+    padding:15px;
+    border-radius:10px;
+    margin-bottom:12px;
+}
+
+.registration b{
+    color:#00e5ff;
+}
+
+.delete{
+    background:#d9534f;
+    color:white;
+    margin-top:12px;
+}
+
+/* Buttons */
+
+.action{
+    margin-top:20px;
+}
+
+.logout{
+    background:#252e4d;
+    color:white;
+}
+
+.home{
+    background:#00e5ff;
+    color:#061018;
+}
+
+/* Footer */
+
+footer{
+    margin-top:35px;
+    padding:20px;
+    text-align:center;
+    background:#111936;
+    color:#777;
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<header>
+
+<h1>
+🏆 SB TOURNAMENT
+</h1>
+
+<p>
+Admin Panel
+</p>
+
+</header>
+
+
+<div class="container">
+
+
+<!-- LOGIN -->
+
+<div id="loginBox"
+     class="login-box">
+
+<h2>
+🔐 Admin Login
+</h2>
+
+
+<form id="loginForm">
+
+<label>
+Username
+</label>
+
+<input
+type="text"
+id="username"
+placeholder="Admin Username"
+required
+>
+
+
+<label>
+Password
+</label>
+
+<input
+type="password"
+id="password"
+placeholder="Admin Password"
+required
+>
+
+
+<button type="submit">
+Login
+</button>
+
+</form>
+
+
+<div id="loginError"
+     class="error">
+
+❌ Username অথবা Password ভুল।
+
+</div>
+
+</div>
+
+
+<!-- ADMIN PANEL -->
+
+<div id="adminPanel">
+
+
+<h2 class="dashboard-title">
+📊 Admin Dashboard
+</h2>
+
+
+<!-- STATS -->
+
+<div class="stats">
+
+
+<div class="stat">
+
+<h3>
+Total Registrations
+</h3>
+
+<p id="totalRegistrations">
+0
+</p>
+
+</div>
+
+
+<div class="stat">
+
+<h3>
+Solo
+</h3>
+
+<p id="soloCount">
+0
+</p>
+
+</div>
+
+
+<div class="stat">
+
+<h3>
+Duo
+</h3>
+
+<p id="duoCount">
+0
+</p>
+
+</div>
+
+
+<div class="stat">
+
+<h3>
+Squad
+</h3>
+
+<p id="squadCount">
+0
+</p>
+
+</div>
+
+
+</div>
+
+
+<!-- REGISTRATIONS -->
+
+<div class="registrations">
+
+<h2>
+📋 Player Registrations
+</h2>
+
+
+<div id="registrationList">
+
+</div>
+
+
+</div>
+
+
+<!-- ACTIONS -->
+
+<div class="action">
+
+<button
+class="logout"
+onclick="logout()">
+
+🚪 Logout
+
+</button>
+
+
+<button
+class="home"
+onclick="goHome()">
+
+🏠 Home
+
+</button>
+
+</div>
+
+
+</div>
+
+</div>
+
+
+<footer>
+
+© 2026 SB Tournament
+
+</footer>
+
+
+<script>
+
+/*
+    DEMO ADMIN LOGIN
+
+    Username:
+    admin
+
+    Password:
+    123456
+
+    ⚠️ এটি শুধু Demo Login।
+    Production website-এ password
+    HTML/JavaScript-এর মধ্যে রাখা
+    নিরাপদ নয়।
+*/
+
+
+const ADMIN_USERNAME =
+"admin";
+
+const ADMIN_PASSWORD =
+"123456";
+
+
+const loginForm =
+document.getElementById(
+    "loginForm"
+);
+
+
+loginForm.addEventListener(
+"submit",
+function(e){
+
+    e.preventDefault();
+
+
+    const username =
+        document.getElementById(
+            "username"
+        ).value.trim();
+
+
+    const password =
+        document.getElementById(
+            "password"
+        ).value;
+
+
+    if(
+        username === ADMIN_USERNAME &&
+        password === ADMIN_PASSWORD
+    ){
+
+        sessionStorage.setItem(
+            "sbAdminLoggedIn",
+            "true"
+        );
+
+
+        showAdmin();
+
+    }
+
+    else{
+
+        document.getElementById(
+            "loginError"
+        ).style.display =
+            "block";
+
+    }
+
+});
+
+
+/* Show Admin */
+
+function showAdmin(){
+
+    document.getElementById(
+        "loginBox"
+    ).style.display =
+        "none";
+
+
+    document.getElementById(
+        "adminPanel"
+    ).style.display =
+        "block";
+
+
+    loadRegistrations();
+
+}
+
+
+/* Load Registrations */
+
+function loadRegistrations(){
+
+    const registrations =
+        JSON.parse(
+            localStorage.getItem(
+                "sbTournamentRegistrations"
+            )
+        ) || [];
+
+
+    document.getElementById(
+        "totalRegistrations"
+    ).innerText =
+        registrations.length;
+
+
+    let solo = 0;
+    let duo = 0;
+    let squad = 0;
+
+
+    registrations.forEach(
+    function(item){
+
+        if(
+            item.tournament ===
+            "Solo Match"
+        ){
+
+            solo++;
+
+        }
+
+
+        if(
+            item.tournament ===
+            "Duo Match"
+        ){
+
+            duo++;
+
+        }
+
+
+        if(
+            item.tournament ===
+            "Squad Match"
+        ){
+
+            squad++;
+
+        }
+
+    });
+
+
+    document.getElementById(
+        "soloCount"
+    ).innerText =
+        solo;
+
+
+    document.getElementById(
+        "duoCount"
+    ).innerText =
+        duo;
+
+
+    document.getElementById(
+        "squadCount"
+    ).innerText =
+        squad;
+
+
+    const list =
+        document.getElementById(
+            "registrationList"
+        );
+
+
+    if(registrations.length === 0){
+
+        list.innerHTML =
+            "<p>" +
+            "কোনো Registration নেই।" +
+            "</p>";
+
+        return;
+
+    }
+
+
+    list.innerHTML = "";
+
+
+    registrations
+    .slice()
+    .reverse()
+    .forEach(
+    function(item,index){
+
+        const box =
+            document.createElement(
+                "div"
+            );
+
+
+        box.className =
+            "registration";
+
+
+        box.innerHTML =
+
+            "<b>🏆 " +
+            item.tournament +
+            "</b><br><br>" +
+
+            "👤 Player: " +
+            item.playerName +
+            "<br>" +
+
+            "🆔 UID: " +
+            item.uid +
+            "<br>" +
+
+            "🎮 IGN: " +
+            item.ign +
+            "<br>" +
+
+            "📱 Phone: " +
+            item.phone +
+            "<br>" +
+
+            "👥 Team: " +
+            (item.team || "N/A") +
+            "<br>" +
+
+            "📅 Date: " +
+            item.date;
+
+
+        const deleteButton =
+            document.createElement(
+                "button"
+            );
+
+
+        deleteButton.className =
+            "delete";
+
+
+        deleteButton.innerText =
+            "🗑️ Delete";
+
+
+        deleteButton.onclick =
+            function(){
+
+                deleteRegistration(
+                    registrations.length -
+                    1 -
+                    index
+                );
+
+            };
+
+
+        box.appendChild(
+            deleteButton
+        );
+
+
+        list.appendChild(
+            box
+        );
+
+    });
+
+}
+
+
+/* Delete */
+
+function deleteRegistration(index){
+
+    const registrations =
+        JSON.parse(
+            localStorage.getItem(
+                "sbTournamentRegistrations"
+            )
+        ) || [];
+
+
+    if(
+        !confirm(
+            "এই Registration মুছে ফেলবেন?"
+        )
+    ){
+
+        return;
+
+    }
+
+
+    registrations.splice(
+        index,
+        1
+    );
+
+
+    localStorage.setItem(
+        "sbTournamentRegistrations",
+        JSON.stringify(
+            registrations
+        )
+    );
+
+
+    loadRegistrations();
+
+}
+
+
+/* Logout */
+
+function logout(){
+
+    sessionStorage.removeItem(
+        "sbAdminLoggedIn"
+    );
+
+
+    location.reload();
+
+}
+
+
+/* Home */
+
+function goHome(){
+
+    window.location.href =
+        "index.html";
+
+}
+
+
+/* Check Login */
+
+if(
+    sessionStorage.getItem(
+        "sbAdminLoggedIn"
+    ) === "true"
+){
+
+    showAdmin();
+
+}
+
+</script>
+
+
+</body>
+</html>
