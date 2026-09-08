@@ -1,1 +1,461 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+<title>SB Tournament - Join Match</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+    font-family:Arial,sans-serif;
+}
+
+body{
+    background:#f4f6fb;
+    color:#222;
+}
+
+.header{
+    background:#171a2b;
+    color:white;
+    text-align:center;
+    padding:22px 15px;
+}
+
+.header h1{
+    font-size:25px;
+}
+
+.container{
+    width:94%;
+    max-width:900px;
+    margin:25px auto;
+}
+
+.card{
+    background:white;
+    padding:20px;
+    border-radius:15px;
+    margin-bottom:18px;
+    box-shadow:0 4px 15px rgba(0,0,0,.08);
+}
+
+.card h2{
+    margin-bottom:15px;
+}
+
+.form-group{
+    margin-bottom:14px;
+}
+
+label{
+    display:block;
+    margin-bottom:6px;
+    font-weight:bold;
+}
+
+input{
+    width:100%;
+    padding:12px;
+    border:1px solid #ddd;
+    border-radius:8px;
+    font-size:15px;
+}
+
+button{
+    border:0;
+    border-radius:8px;
+    padding:12px 16px;
+    cursor:pointer;
+    font-weight:bold;
+}
+
+.load-btn{
+    width:100%;
+    background:#2563eb;
+    color:white;
+}
+
+.match{
+    border:1px solid #e5e7eb;
+    border-radius:12px;
+    padding:16px;
+    margin-top:15px;
+}
+
+.match h3{
+    margin-bottom:8px;
+}
+
+.info{
+    line-height:1.8;
+    color:#555;
+}
+
+.status{
+    display:inline-block;
+    padding:5px 10px;
+    border-radius:20px;
+    background:#ecfdf5;
+    color:#047857;
+    font-size:13px;
+    font-weight:bold;
+    margin-bottom:8px;
+}
+
+.join-btn{
+    width:100%;
+    margin-top:12px;
+    background:#16a34a;
+    color:white;
+}
+
+.joined{
+    background:#e5e7eb;
+    color:#555;
+    cursor:not-allowed;
+}
+
+.message{
+    margin-top:15px;
+    padding:12px;
+    border-radius:8px;
+    display:none;
+}
+
+.empty{
+    text-align:center;
+    padding:25px;
+    color:#777;
+}
+
+.note{
+    font-size:14px;
+    color:#666;
+    line-height:1.6;
+    margin-bottom:15px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+    <h1>🏆 SB Tournament</h1>
+    <p>🎮 P10 — Join Match</p>
+</div>
+
+
+<div class="container">
+
+    <div class="card">
+
+        <h2>👤 Player Information</h2>
+
+        <p class="note">
+            ম্যাচে Join করার আগে তোমার Player Name এবং Free Fire UID দাও।
+        </p>
+
+        <div class="form-group">
+            <label>Player Name</label>
+            <input
+                id="playerName"
+                type="text"
+                placeholder="তোমার নাম">
+        </div>
+
+        <div class="form-group">
+            <label>Free Fire UID</label>
+            <input
+                id="playerUid"
+                type="text"
+                placeholder="তোমার UID">
+        </div>
+
+        <button
+            class="load-btn"
+            onclick="loadMatches()">
+            🔄 Load Matches
+        </button>
+
+        <div id="message" class="message"></div>
+
+    </div>
+
+
+    <div class="card">
+
+        <h2>🏆 Available Matches</h2>
+
+        <div id="matchList">
+            <div class="empty">
+                আগে Load Matches চাপুন।
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+/* =========================
+   SUPABASE CONFIG
+   ========================= */
+
+const SUPABASE_URL = "YOUR_SUPABASE_URL";
+
+const SUPABASE_PUBLISHABLE_KEY =
+"YOUR_SUPABASE_PUBLISHABLE_KEY";
+
+
+const supabaseClient =
+supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_PUBLISHABLE_KEY
+);
+
+
+/* =========================
+   MESSAGE
+   ========================= */
+
+function showMessage(text){
+
+    const box =
+        document.getElementById("message");
+
+    box.style.display = "block";
+    box.textContent = text;
+
+}
+
+
+/* =========================
+   LOAD MATCHES
+   ========================= */
+
+async function loadMatches(){
+
+    const list =
+        document.getElementById("matchList");
+
+    list.innerHTML =
+        `<div class="empty">Loading...</div>`;
+
+
+    const { data, error } =
+        await supabaseClient
+        .from("matches")
+        .select("*")
+        .order("created_at", {
+            ascending:false
+        });
+
+
+    if(error){
+
+        list.innerHTML =
+            `<div class="empty">
+                ❌ Match load করা যায়নি।
+             </div>`;
+
+        showMessage(
+            "Supabase error: " + error.message
+        );
+
+        return;
+    }
+
+
+    if(!data || data.length === 0){
+
+        list.innerHTML =
+            `<div class="empty">
+                😔 কোনো Match পাওয়া যায়নি।
+             </div>`;
+
+        return;
+    }
+
+
+    list.innerHTML =
+        data.map(match => `
+
+        <div class="match">
+
+            <h3>
+                🏆 ${escapeHTML(
+                    match.tournament_name || "Tournament"
+                )}
+            </h3>
+
+            <span class="status">
+                ${escapeHTML(
+                    match.status || "Upcoming"
+                )}
+            </span>
+
+            <div class="info">
+
+                📅 Date:
+                ${escapeHTML(match.match_date || "-")}
+                <br>
+
+                🕐 Time:
+                ${escapeHTML(match.match_time || "-")}
+                <br>
+
+                👥 Players:
+                ${escapeHTML(
+                    String(match.joined_count || 0)
+                )}
+
+            </div>
+
+
+            <button
+                class="join-btn"
+                onclick="joinMatch('${safeJS(match.id)}')">
+
+                🎮 Join Match
+
+            </button>
+
+        </div>
+
+    `).join("");
+
+}
+
+
+/* =========================
+   JOIN MATCH
+   ========================= */
+
+async function joinMatch(matchId){
+
+    const playerName =
+        document
+        .getElementById("playerName")
+        .value
+        .trim();
+
+
+    const playerUid =
+        document
+        .getElementById("playerUid")
+        .value
+        .trim();
+
+
+    if(!playerName || !playerUid){
+
+        showMessage(
+            "⚠️ Player Name এবং UID দিন।"
+        );
+
+        return;
+    }
+
+
+    const { data: existing, error: checkError } =
+        await supabaseClient
+        .from("match_players")
+        .select("id")
+        .eq("match_id", matchId)
+        .eq("player_uid", playerUid)
+        .maybeSingle();
+
+
+    if(checkError){
+
+        showMessage(
+            "Check error: " +
+            checkError.message
+        );
+
+        return;
+    }
+
+
+    if(existing){
+
+        showMessage(
+            "⚠️ এই UID দিয়ে এই ম্যাচে আগেই Join করা হয়েছে।"
+        );
+
+        return;
+    }
+
+
+    const { error } =
+        await supabaseClient
+        .from("match_players")
+        .insert([{
+
+            match_id: matchId,
+
+            player_name: playerName,
+
+            player_uid: playerUid
+
+        }]);
+
+
+    if(error){
+
+        showMessage(
+            "❌ Join করা যায়নি: " +
+            error.message
+        );
+
+        return;
+    }
+
+
+    showMessage(
+        "✅ Match-এ সফলভাবে Join হয়েছে!"
+    );
+
+
+    loadMatches();
+
+}
+
+
+/* =========================
+   SECURITY HELPERS
+   ========================= */
+
+function escapeHTML(text){
+
+    return String(text)
+        .replace(/&/g,"&amp;")
+        .replace(/</g,"&lt;")
+        .replace(/>/g,"&gt;")
+        .replace(/"/g,"&quot;")
+        .replace(/'/g,"&#039;");
+
+}
+
+
+function safeJS(text){
+
+    return String(text)
+        .replace(/\\/g,"\\\\")
+        .replace(/'/g,"\\'");
+
+}
+
+</script>
+
+</body>
+</html>
