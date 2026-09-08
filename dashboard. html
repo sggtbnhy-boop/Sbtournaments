@@ -1,1 +1,407 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+<title>SB Tournament - Dashboard</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial,sans-serif;
+}
+
+body{
+    background:#080d1c;
+    color:white;
+}
+
+header{
+    background:#111936;
+    padding:18px;
+    text-align:center;
+}
+
+header h1{
+    color:#00e5ff;
+    font-size:25px;
+}
+
+header p{
+    color:#aaa;
+    margin-top:6px;
+}
+
+.container{
+    width:92%;
+    max-width:700px;
+    margin:25px auto;
+}
+
+.welcome{
+    background:#121a35;
+    border:1px solid #25315b;
+    border-radius:15px;
+    padding:22px;
+    text-align:center;
+}
+
+.welcome h2{
+    color:#00e5ff;
+    margin-bottom:8px;
+}
+
+.welcome p{
+    color:#aaa;
+}
+
+.profile{
+    margin-top:20px;
+    background:#121a35;
+    border:1px solid #25315b;
+    border-radius:15px;
+    padding:20px;
+}
+
+.profile h2{
+    color:#00e5ff;
+    margin-bottom:15px;
+}
+
+.info{
+    background:#1b2545;
+    padding:14px;
+    border-radius:9px;
+    margin-bottom:10px;
+    color:#ddd;
+}
+
+.label{
+    color:#00e5ff;
+    font-weight:bold;
+}
+
+.tournament{
+    margin-top:20px;
+    background:#121a35;
+    border:1px solid #25315b;
+    border-radius:15px;
+    padding:20px;
+}
+
+.tournament h2{
+    color:#00e5ff;
+    margin-bottom:15px;
+}
+
+.tournament-box{
+    background:#1b2545;
+    padding:15px;
+    border-radius:10px;
+    margin-bottom:12px;
+}
+
+.status{
+    display:inline-block;
+    margin-top:8px;
+    padding:6px 10px;
+    border-radius:7px;
+    background:#123d28;
+    color:#5cff9a;
+    font-size:13px;
+}
+
+.no-data{
+    color:#888;
+    text-align:center;
+    padding:15px;
+}
+
+.buttons{
+    margin-top:20px;
+}
+
+.btn{
+    display:block;
+    width:100%;
+    padding:13px;
+    margin-top:10px;
+    border-radius:9px;
+    text-align:center;
+    text-decoration:none;
+    font-weight:bold;
+}
+
+.primary{
+    background:#00e5ff;
+    color:#061018;
+}
+
+.secondary{
+    background:#252e4d;
+    color:white;
+}
+
+footer{
+    margin-top:35px;
+    padding:20px;
+    background:#111936;
+    text-align:center;
+    color:#777;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+
+    <h1>🏆 SB TOURNAMENT</h1>
+
+    <p>Player Dashboard</p>
+
+</header>
+
+
+<div class="container">
+
+
+    <!-- WELCOME -->
+
+    <div class="welcome">
+
+        <h2>👋 Welcome, Player!</h2>
+
+        <p>
+            আপনার Tournament Dashboard
+        </p>
+
+    </div>
+
+
+    <!-- PROFILE -->
+
+    <div class="profile">
+
+        <h2>👤 Player Profile</h2>
+
+        <div class="info">
+
+            <span class="label">
+                Player Name:
+            </span>
+
+            <span id="playerName">
+                Loading...
+            </span>
+
+        </div>
+
+
+        <div class="info">
+
+            <span class="label">
+                Free Fire UID:
+            </span>
+
+            <span id="uid">
+                Loading...
+            </span>
+
+        </div>
+
+
+        <div class="info">
+
+            <span class="label">
+                In-Game Name:
+            </span>
+
+            <span id="ign">
+                Loading...
+            </span>
+
+        </div>
+
+
+        <div class="info">
+
+            <span class="label">
+                Phone:
+            </span>
+
+            <span id="phone">
+                Loading...
+            </span>
+
+        </div>
+
+    </div>
+
+
+    <!-- TOURNAMENT -->
+
+    <div class="tournament">
+
+        <h2>🏆 My Tournaments</h2>
+
+        <div id="tournamentList"></div>
+
+    </div>
+
+
+    <!-- BUTTONS -->
+
+    <div class="buttons">
+
+        <a
+            href="tournaments.html"
+            class="btn primary">
+
+            🔥 View Tournaments
+
+        </a>
+
+
+        <a
+            href="registration.html"
+            class="btn secondary">
+
+            📝 New Registration
+
+        </a>
+
+
+        <a
+            href="index.html"
+            class="btn secondary">
+
+            🏠 Home
+
+        </a>
+
+    </div>
+
+</div>
+
+
+<footer>
+
+    © 2026 SB Tournament
+
+</footer>
+
+
+<script>
+
+/* Get Registration Data */
+
+const registrations =
+    JSON.parse(
+        localStorage.getItem(
+            "sbTournamentRegistrations"
+        )
+    ) || [];
+
+
+/* Profile */
+
+if(registrations.length > 0){
+
+    const player =
+        registrations[
+            registrations.length - 1
+        ];
+
+
+    document.getElementById(
+        "playerName"
+    ).innerText =
+        player.playerName;
+
+
+    document.getElementById(
+        "uid"
+    ).innerText =
+        player.uid;
+
+
+    document.getElementById(
+        "ign"
+    ).innerText =
+        player.ign;
+
+
+    document.getElementById(
+        "phone"
+    ).innerText =
+        player.phone;
+
+}
+
+
+/* Tournament List */
+
+const tournamentList =
+    document.getElementById(
+        "tournamentList"
+    );
+
+
+if(registrations.length === 0){
+
+    tournamentList.innerHTML =
+        '<div class="no-data">' +
+        '❌ কোনো Registration পাওয়া যায়নি।' +
+        '</div>';
+
+}else{
+
+    registrations
+        .slice()
+        .reverse()
+        .forEach(function(item){
+
+        const box =
+            document.createElement("div");
+
+        box.className =
+            "tournament-box";
+
+
+        box.innerHTML =
+
+            "<b>🎮 " +
+            item.tournament +
+            "</b><br><br>" +
+
+            "👤 Player: " +
+            item.playerName +
+            "<br>" +
+
+            "🆔 UID: " +
+            item.uid +
+            "<br>" +
+
+            "📅 Registered: " +
+            item.date +
+            "<br>" +
+
+            '<span class="status">' +
+            "● Registered" +
+            "</span>";
+
+
+        tournamentList.appendChild(box);
+
+    });
+
+}
+
+</script>
+
+</body>
+</html>
