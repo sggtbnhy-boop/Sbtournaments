@@ -1,1 +1,293 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+<title>SB Tournament - Match Room</title>
+
+<style>
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+    font-family:Arial,sans-serif;
+}
+
+body{
+    background:#f4f6fb;
+    color:#222;
+}
+
+.header{
+    background:#171a2b;
+    color:white;
+    padding:22px 15px;
+    text-align:center;
+}
+
+.header h1{
+    font-size:25px;
+    margin-bottom:6px;
+}
+
+.container{
+    width:94%;
+    max-width:900px;
+    margin:25px auto;
+}
+
+.card{
+    background:white;
+    border-radius:15px;
+    padding:20px;
+    margin-bottom:18px;
+    box-shadow:0 4px 15px rgba(0,0,0,.08);
+}
+
+.card h2{
+    margin-bottom:15px;
+}
+
+.match{
+    border:1px solid #e5e7eb;
+    border-radius:13px;
+    padding:17px;
+    margin-top:15px;
+}
+
+.match h3{
+    font-size:20px;
+    margin-bottom:10px;
+}
+
+.info{
+    line-height:1.9;
+    color:#555;
+}
+
+.status{
+    display:inline-block;
+    padding:5px 11px;
+    border-radius:20px;
+    background:#fff7ed;
+    color:#c2410c;
+    font-size:13px;
+    font-weight:bold;
+    margin-bottom:10px;
+}
+
+.room-box{
+    background:#f8fafc;
+    border-radius:10px;
+    padding:13px;
+    margin-top:13px;
+}
+
+.room-box b{
+    display:block;
+    margin-bottom:5px;
+}
+
+button{
+    border:none;
+    padding:10px 14px;
+    border-radius:8px;
+    cursor:pointer;
+    font-weight:bold;
+    margin-top:8px;
+}
+
+.copy{
+    background:#16a34a;
+    color:white;
+}
+
+.empty{
+    text-align:center;
+    color:#777;
+    padding:25px 5px;
+}
+
+.refresh{
+    background:#2563eb;
+    color:white;
+    width:100%;
+    margin-top:0;
+}
+
+.note{
+    color:#666;
+    font-size:14px;
+    line-height:1.6;
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+    <h1>🏆 SB Tournament</h1>
+    <p>🎮 Player Match Room</p>
+</div>
+
+
+<div class="container">
+
+    <div class="card">
+        <h2>🎮 My Matches</h2>
+
+        <p class="note">
+            এখানে Tournament-এর ম্যাচ, সময় এবং Room তথ্য দেখা যাবে।
+        </p>
+
+        <button class="refresh" onclick="renderMatches()">
+            🔄 Refresh Matches
+        </button>
+
+        <div id="matchList"></div>
+    </div>
+
+</div>
+
+
+<script>
+
+function getMatches(){
+
+    return JSON.parse(
+        localStorage.getItem("sb_matches")
+    ) || [];
+
+}
+
+
+function copyText(text){
+
+    if(navigator.clipboard){
+
+        navigator.clipboard.writeText(text);
+
+        alert("Copied!");
+
+    }else{
+
+        alert("Copy করা সম্ভব হয়নি।");
+
+    }
+
+}
+
+
+function escapeHTML(text){
+
+    return String(text)
+        .replace(/&/g,"&amp;")
+        .replace(/</g,"&lt;")
+        .replace(/>/g,"&gt;")
+        .replace(/"/g,"&quot;")
+        .replace(/'/g,"&#039;");
+
+}
+
+
+function safeJS(text){
+
+    return String(text)
+        .replace(/\\/g,"\\\\")
+        .replace(/'/g,"\\'");
+
+}
+
+
+function renderMatches(){
+
+    const list =
+        document.getElementById("matchList");
+
+    const matches = getMatches();
+
+
+    if(matches.length === 0){
+
+        list.innerHTML = `
+            <div class="empty">
+                <h3>😔 কোনো ম্যাচ পাওয়া যায়নি</h3>
+                <p>Admin এখনো কোনো ম্যাচ তৈরি করেনি।</p>
+            </div>
+        `;
+
+        return;
+    }
+
+
+    list.innerHTML = matches.map(match => `
+
+        <div class="match">
+
+            <h3>
+                🏆 ${escapeHTML(match.tournament)}
+            </h3>
+
+            <span class="status">
+                ${escapeHTML(match.status)}
+            </span>
+
+            <div class="info">
+
+                📅 Date:
+                ${escapeHTML(match.date)}
+                <br>
+
+                🕐 Time:
+                ${escapeHTML(match.time)}
+
+            </div>
+
+
+            <div class="room-box">
+
+                <b>🔑 Room ID</b>
+
+                ${escapeHTML(match.room)}
+
+                <br>
+
+                <button
+                    class="copy"
+                    onclick="copyText('${safeJS(match.room)}')">
+                    📋 Copy Room ID
+                </button>
+
+            </div>
+
+
+            <div class="room-box">
+
+                <b>🔒 Room Password</b>
+
+                ${escapeHTML(match.password)}
+
+                <br>
+
+                <button
+                    class="copy"
+                    onclick="copyText('${safeJS(match.password)}')">
+                    📋 Copy Password
+                </button>
+
+            </div>
+
+        </div>
+
+    `).join("");
+
+}
+
+
+renderMatches();
+
+</script>
+
+</body>
+</html>
