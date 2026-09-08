@@ -1,1 +1,369 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+<title>SB Tournament - Registration</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial,sans-serif;
+}
+
+body{
+    background:#080d1c;
+    color:white;
+}
+
+header{
+    background:#111936;
+    padding:20px;
+    text-align:center;
+}
+
+header h1{
+    color:#00e5ff;
+}
+
+header p{
+    color:#aaa;
+    margin-top:6px;
+}
+
+.container{
+    width:92%;
+    max-width:600px;
+    margin:30px auto;
+}
+
+.card{
+    background:#121a35;
+    padding:25px;
+    border-radius:16px;
+    border:1px solid #25315b;
+}
+
+.card h2{
+    text-align:center;
+    color:#00e5ff;
+    margin-bottom:20px;
+}
+
+label{
+    display:block;
+    margin:14px 0 7px;
+    color:#ddd;
+}
+
+input,
+select{
+    width:100%;
+    padding:13px;
+    border:0;
+    outline:0;
+    border-radius:9px;
+    background:#252e4d;
+    color:white;
+    font-size:15px;
+}
+
+button{
+    width:100%;
+    padding:14px;
+    margin-top:20px;
+    border:0;
+    border-radius:10px;
+    background:#00e5ff;
+    color:#061018;
+    font-size:17px;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+button:active{
+    transform:scale(.98);
+}
+
+.message{
+    display:none;
+    margin-top:18px;
+    padding:13px;
+    border-radius:9px;
+    text-align:center;
+}
+
+.success{
+    background:#123d28;
+    color:#5cff9a;
+}
+
+.error{
+    background:#421b1b;
+    color:#ff7777;
+}
+
+.back{
+    display:block;
+    text-align:center;
+    margin-top:20px;
+    color:#00e5ff;
+    text-decoration:none;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <h1>🏆 SB TOURNAMENT</h1>
+    <p>Tournament Registration</p>
+</header>
+
+<div class="container">
+
+<div class="card">
+
+<h2>🎮 Join Tournament</h2>
+
+<form id="registrationForm">
+
+<label>Player Name</label>
+<input
+    type="text"
+    id="playerName"
+    placeholder="আপনার নাম লিখুন"
+    required
+>
+
+<label>Free Fire UID</label>
+<input
+    type="text"
+    id="uid"
+    placeholder="Free Fire UID লিখুন"
+    required
+>
+
+<label>In-Game Name</label>
+<input
+    type="text"
+    id="ign"
+    placeholder="আপনার In-Game Name"
+    required
+>
+
+<label>Phone Number</label>
+<input
+    type="tel"
+    id="phone"
+    placeholder="01XXXXXXXXX"
+    required
+>
+
+<label>Tournament</label>
+
+<select id="tournament" required>
+
+    <option value="">
+        Tournament নির্বাচন করুন
+    </option>
+
+    <option value="Solo Match">
+        🥇 Solo Match
+    </option>
+
+    <option value="Duo Match">
+        🥈 Duo Match
+    </option>
+
+    <option value="Squad Match">
+        🥉 Squad Match
+    </option>
+
+</select>
+
+<label>Team Name</label>
+
+<input
+    type="text"
+    id="team"
+    placeholder="Team Name (যদি থাকে)"
+>
+
+<button type="submit">
+    ✅ Register Now
+</button>
+
+</form>
+
+<div id="successMessage"
+     class="message success">
+</div>
+
+<div id="errorMessage"
+     class="message error">
+</div>
+
+<a href="index.html" class="back">
+    ← Back to Home
+</a>
+
+</div>
+</div>
+
+<script>
+
+const form =
+document.getElementById("registrationForm");
+
+const successMessage =
+document.getElementById("successMessage");
+
+const errorMessage =
+document.getElementById("errorMessage");
+
+
+/* P1 থেকে Tournament নাম নেওয়া */
+
+const selectedTournament =
+localStorage.getItem("selectedTournament");
+
+if(selectedTournament){
+
+    document.getElementById("tournament").value =
+        selectedTournament;
+
+}
+
+
+/* Registration */
+
+form.addEventListener("submit", function(e){
+
+    e.preventDefault();
+
+    successMessage.style.display = "none";
+    errorMessage.style.display = "none";
+
+
+    const playerName =
+        document.getElementById("playerName")
+        .value.trim();
+
+    const uid =
+        document.getElementById("uid")
+        .value.trim();
+
+    const ign =
+        document.getElementById("ign")
+        .value.trim();
+
+    const phone =
+        document.getElementById("phone")
+        .value.trim();
+
+    const tournament =
+        document.getElementById("tournament")
+        .value;
+
+    const team =
+        document.getElementById("team")
+        .value.trim();
+
+
+    /* Basic validation */
+
+    if(
+        !playerName ||
+        !uid ||
+        !ign ||
+        !phone ||
+        !tournament
+    ){
+
+        errorMessage.innerText =
+            "❌ দয়া করে সব প্রয়োজনীয় তথ্য পূরণ করুন।";
+
+        errorMessage.style.display = "block";
+
+        return;
+    }
+
+
+    /* Registration object */
+
+    const registration = {
+
+        id: Date.now(),
+
+        playerName: playerName,
+
+        uid: uid,
+
+        ign: ign,
+
+        phone: phone,
+
+        tournament: tournament,
+
+        team: team,
+
+        date: new Date().toLocaleString()
+
+    };
+
+
+    /* পুরোনো Registration নেওয়া */
+
+    let registrations =
+        JSON.parse(
+            localStorage.getItem(
+                "sbTournamentRegistrations"
+            )
+        ) || [];
+
+
+    /* নতুন Registration যোগ */
+
+    registrations.push(registration);
+
+
+    /* Save */
+
+    localStorage.setItem(
+        "sbTournamentRegistrations",
+        JSON.stringify(registrations)
+    );
+
+
+    /* Success */
+
+    successMessage.innerText =
+        "✅ Registration Successful!";
+
+    successMessage.style.display = "block";
+
+
+    /* Form reset */
+
+    form.reset();
+
+
+    /* Selected tournament আবার দেখানো */
+
+    if(selectedTournament){
+
+        document.getElementById("tournament").value =
+            selectedTournament;
+
+    }
+
+});
+
+</script>
+
+</body>
+</html>
