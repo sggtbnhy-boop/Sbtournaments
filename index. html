@@ -1,1 +1,238 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+  <title>SB Tournament</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      background: #0b1020;
+      color: white;
+    }
+
+    /* Header */
+    header {
+      background: #11182d;
+      padding: 15px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .logo {
+      font-size: 22px;
+      font-weight: bold;
+      color: #00eaff;
+    }
+
+    .menu-btn {
+      background: #00eaff;
+      color: #000;
+      border: none;
+      padding: 9px 14px;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    /* Hero */
+    .hero {
+      text-align: center;
+      padding: 50px 20px;
+      background: linear-gradient(135deg, #11182d, #16264d);
+    }
+
+    .hero h1 {
+      font-size: 38px;
+      margin-bottom: 12px;
+    }
+
+    .hero h1 span {
+      color: #00eaff;
+    }
+
+    .hero p {
+      color: #c5c9d6;
+      font-size: 16px;
+      margin-bottom: 25px;
+    }
+
+    .main-btn {
+      display: inline-block;
+      text-decoration: none;
+      background: #00eaff;
+      color: #000;
+      padding: 12px 24px;
+      border-radius: 10px;
+      font-weight: bold;
+    }
+
+    /* Tournament Section */
+    .section {
+      padding: 30px 18px;
+      max-width: 900px;
+      margin: auto;
+    }
+
+    .section-title {
+      font-size: 25px;
+      margin-bottom: 20px;
+    }
+
+    /* Card */
+    .card {
+      background: #151d35;
+      border: 1px solid #263457;
+      border-radius: 15px;
+      padding: 20px;
+      margin-bottom: 18px;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.25);
+    }
+
+    .card h3 {
+      color: #00eaff;
+      margin-bottom: 12px;
+      font-size: 21px;
+    }
+
+    .info {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+
+    .info div {
+      background: #0e1528;
+      padding: 10px;
+      border-radius: 8px;
+      color: #dce1ef;
+      font-size: 14px;
+    }
+
+    .register-btn {
+      width: 100%;
+      border: none;
+      padding: 12px;
+      border-radius: 9px;
+      background: #00eaff;
+      color: #000;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    /* Bottom */
+    footer {
+      text-align: center;
+      padding: 25px;
+      background: #11182d;
+      color: #8992aa;
+      margin-top: 30px;
+    }
+
+    @media (max-width: 500px) {
+      .hero h1 {
+        font-size: 30px;
+      }
+
+      .info {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Header -->
+  <header>
+    <div class="logo">🎮 SB TOURNAMENT</div>
+    <button class="menu-btn" onclick="showMenu()">MENU</button>
+  </header>
+
+  <!-- Hero -->
+  <section class="hero">
+    <h1>Welcome to <span>SB Tournament</span></h1>
+
+    <p>
+      Join exciting gaming tournaments and compete for prizes!
+    </p>
+
+    <a href="#tournaments" class="main-btn">
+      🏆 View Tournaments
+    </a>
+  </section>
+
+  <!-- Tournament -->
+  <section class="section" id="tournaments">
+
+    <h2 class="section-title">🔥 Upcoming Tournaments</h2>
+
+    <div class="card">
+
+      <h3>🎮 Free Fire Squad Tournament</h3>
+
+      <div class="info">
+        <div>💰 Prize Pool: ৳500</div>
+        <div>💵 Entry Fee: FREE</div>
+        <div>👥 Team: Squad</div>
+        <div>🎯 Mode: Battle Royale</div>
+      </div>
+
+      <button class="register-btn" onclick="registerTournament()">
+        📝 Register Now
+      </button>
+
+    </div>
+
+    <div class="card">
+
+      <h3>🔥 Free Fire Solo Tournament</h3>
+
+      <div class="info">
+        <div>💰 Prize Pool: ৳300</div>
+        <div>💵 Entry Fee: FREE</div>
+        <div>👤 Team: Solo</div>
+        <div>🎯 Mode: Battle Royale</div>
+      </div>
+
+      <button class="register-btn" onclick="registerTournament()">
+        📝 Register Now
+      </button>
+
+    </div>
+
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    © 2026 SB Tournament — All Rights Reserved
+  </footer>
+
+  <script>
+
+    function registerTournament() {
+      alert("📝 Tournament Registration Part 2-এ যোগ করা হবে!");
+    }
+
+    function showMenu() {
+      alert("🏠 Home\n🏆 Tournaments\n👤 Profile\n📋 My Tournaments");
+    }
+
+  </script>
+
+</body>
+</html>
