@@ -1,238 +1,297 @@
 <!DOCTYPE html>
 <html lang="bn">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>SB Tournament</title>
+<title>SB Tournament</title>
 
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: Arial, sans-serif;
-    }
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial,sans-serif;
+}
 
-    body {
-      background: #0b1020;
-      color: white;
-    }
+body{
+    background:#080d1c;
+    color:white;
+}
 
-    /* Header */
-    header {
-      background: #11182d;
-      padding: 15px 20px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      position: sticky;
-      top: 0;
-      z-index: 100;
-    }
+/* Header */
+header{
+    background:#111936;
+    padding:20px;
+    text-align:center;
+    box-shadow:0 4px 15px rgba(0,0,0,.4);
+}
 
-    .logo {
-      font-size: 22px;
-      font-weight: bold;
-      color: #00eaff;
-    }
+header h1{
+    color:#00e5ff;
+    font-size:28px;
+}
 
-    .menu-btn {
-      background: #00eaff;
-      color: #000;
-      border: none;
-      padding: 9px 14px;
-      border-radius: 8px;
-      font-weight: bold;
-      cursor: pointer;
-    }
+header p{
+    color:#aaa;
+    margin-top:6px;
+}
 
-    /* Hero */
-    .hero {
-      text-align: center;
-      padding: 50px 20px;
-      background: linear-gradient(135deg, #11182d, #16264d);
-    }
+/* Main */
+.container{
+    width:92%;
+    max-width:900px;
+    margin:30px auto;
+}
 
-    .hero h1 {
-      font-size: 38px;
-      margin-bottom: 12px;
-    }
+/* Hero */
+.hero{
+    background:linear-gradient(135deg,#121b3d,#172654);
+    padding:30px 20px;
+    border-radius:18px;
+    text-align:center;
+    box-shadow:0 5px 20px rgba(0,0,0,.35);
+}
 
-    .hero h1 span {
-      color: #00eaff;
-    }
+.hero h2{
+    font-size:26px;
+    margin-bottom:10px;
+    color:#fff;
+}
 
-    .hero p {
-      color: #c5c9d6;
-      font-size: 16px;
-      margin-bottom: 25px;
-    }
+.hero p{
+    color:#bbb;
+    line-height:1.6;
+}
 
-    .main-btn {
-      display: inline-block;
-      text-decoration: none;
-      background: #00eaff;
-      color: #000;
-      padding: 12px 24px;
-      border-radius: 10px;
-      font-weight: bold;
-    }
+/* Button */
+.register-btn{
+    display:inline-block;
+    margin-top:20px;
+    padding:14px 28px;
+    background:#00e5ff;
+    color:#061018;
+    text-decoration:none;
+    border-radius:10px;
+    font-weight:bold;
+    font-size:16px;
+}
 
-    /* Tournament Section */
-    .section {
-      padding: 30px 18px;
-      max-width: 900px;
-      margin: auto;
-    }
+.register-btn:hover{
+    opacity:.85;
+}
 
-    .section-title {
-      font-size: 25px;
-      margin-bottom: 20px;
-    }
+/* Tournament */
+.section-title{
+    text-align:center;
+    margin:35px 0 18px;
+    color:#00e5ff;
+}
 
-    /* Card */
-    .card {
-      background: #151d35;
-      border: 1px solid #263457;
-      border-radius: 15px;
-      padding: 20px;
-      margin-bottom: 18px;
-      box-shadow: 0 5px 20px rgba(0,0,0,0.25);
-    }
+.tournaments{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(230px,1fr));
+    gap:18px;
+}
 
-    .card h3 {
-      color: #00eaff;
-      margin-bottom: 12px;
-      font-size: 21px;
-    }
+.card{
+    background:#121a35;
+    padding:22px;
+    border-radius:15px;
+    border:1px solid #25315b;
+}
 
-    .info {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      margin-bottom: 18px;
-    }
+.card h3{
+    color:#00e5ff;
+    margin-bottom:12px;
+}
 
-    .info div {
-      background: #0e1528;
-      padding: 10px;
-      border-radius: 8px;
-      color: #dce1ef;
-      font-size: 14px;
-    }
+.card p{
+    color:#bbb;
+    line-height:1.7;
+}
 
-    .register-btn {
-      width: 100%;
-      border: none;
-      padding: 12px;
-      border-radius: 9px;
-      background: #00eaff;
-      color: #000;
-      font-size: 16px;
-      font-weight: bold;
-      cursor: pointer;
-    }
+.card button{
+    width:100%;
+    margin-top:15px;
+    padding:11px;
+    border:none;
+    border-radius:8px;
+    background:#00e5ff;
+    font-weight:bold;
+    cursor:pointer;
+}
 
-    /* Bottom */
-    footer {
-      text-align: center;
-      padding: 25px;
-      background: #11182d;
-      color: #8992aa;
-      margin-top: 30px;
-    }
+/* Features */
+.features{
+    margin-top:30px;
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+    gap:15px;
+}
 
-    @media (max-width: 500px) {
-      .hero h1 {
-        font-size: 30px;
-      }
+.feature{
+    background:#121a35;
+    padding:20px;
+    border-radius:12px;
+    text-align:center;
+}
 
-      .info {
-        grid-template-columns: 1fr;
-      }
-    }
-  </style>
+.feature h3{
+    margin-bottom:8px;
+}
+
+.feature p{
+    color:#aaa;
+    font-size:14px;
+}
+
+/* Footer */
+footer{
+    margin-top:40px;
+    background:#111936;
+    text-align:center;
+    padding:20px;
+    color:#888;
+}
+</style>
 </head>
 
 <body>
 
-  <!-- Header -->
-  <header>
-    <div class="logo">🎮 SB TOURNAMENT</div>
-    <button class="menu-btn" onclick="showMenu()">MENU</button>
-  </header>
+<header>
+    <h1>🏆 SB TOURNAMENT</h1>
+    <p>Free Fire Tournament Platform</p>
+</header>
 
-  <!-- Hero -->
-  <section class="hero">
-    <h1>Welcome to <span>SB Tournament</span></h1>
+<main class="container">
 
-    <p>
-      Join exciting gaming tournaments and compete for prizes!
-    </p>
+    <section class="hero">
 
-    <a href="#tournaments" class="main-btn">
-      🏆 View Tournaments
-    </a>
-  </section>
+        <h2>🎮 Welcome to SB Tournament</h2>
 
-  <!-- Tournament -->
-  <section class="section" id="tournaments">
+        <p>
+            আপনার পছন্দের Free Fire Tournament-এ
+            অংশগ্রহণ করুন এবং নিজের স্কিল দেখান।
+        </p>
 
-    <h2 class="section-title">🔥 Upcoming Tournaments</h2>
+        <a href="registration.html" class="register-btn">
+            📝 Tournament Register
+        </a>
 
-    <div class="card">
+    </section>
 
-      <h3>🎮 Free Fire Squad Tournament</h3>
 
-      <div class="info">
-        <div>💰 Prize Pool: ৳500</div>
-        <div>💵 Entry Fee: FREE</div>
-        <div>👥 Team: Squad</div>
-        <div>🎯 Mode: Battle Royale</div>
-      </div>
+    <h2 class="section-title">
+        🔥 Available Tournaments
+    </h2>
 
-      <button class="register-btn" onclick="registerTournament()">
-        📝 Register Now
-      </button>
+    <section class="tournaments">
 
-    </div>
+        <div class="card">
 
-    <div class="card">
+            <h3>🥇 Solo Match</h3>
 
-      <h3>🔥 Free Fire Solo Tournament</h3>
+            <p>
+                👤 Players: 1<br>
+                🎮 Mode: Solo<br>
+                💰 Entry: Free
+            </p>
 
-      <div class="info">
-        <div>💰 Prize Pool: ৳300</div>
-        <div>💵 Entry Fee: FREE</div>
-        <div>👤 Team: Solo</div>
-        <div>🎯 Mode: Battle Royale</div>
-      </div>
+            <button onclick="registerTournament('Solo Match')">
+                Join Now
+            </button>
 
-      <button class="register-btn" onclick="registerTournament()">
-        📝 Register Now
-      </button>
+        </div>
 
-    </div>
 
-  </section>
+        <div class="card">
 
-  <!-- Footer -->
-  <footer>
-    © 2026 SB Tournament — All Rights Reserved
-  </footer>
+            <h3>🥈 Duo Match</h3>
 
-  <script>
+            <p>
+                👥 Players: 2<br>
+                🎮 Mode: Duo<br>
+                💰 Entry: Free
+            </p>
 
-    function registerTournament() {
-      alert("📝 Tournament Registration Part 2-এ যোগ করা হবে!");
-    }
+            <button onclick="registerTournament('Duo Match')">
+                Join Now
+            </button>
 
-    function showMenu() {
-      alert("🏠 Home\n🏆 Tournaments\n👤 Profile\n📋 My Tournaments");
-    }
+        </div>
 
-  </script>
+
+        <div class="card">
+
+            <h3>🥉 Squad Match</h3>
+
+            <p>
+                👥 Players: 4<br>
+                🎮 Mode: Squad<br>
+                💰 Entry: Free
+            </p>
+
+            <button onclick="registerTournament('Squad Match')">
+                Join Now
+            </button>
+
+        </div>
+
+    </section>
+
+
+    <h2 class="section-title">
+        ⭐ Why SB Tournament?
+    </h2>
+
+    <section class="features">
+
+        <div class="feature">
+            <h3>🎮 Easy Join</h3>
+            <p>
+                সহজেই Tournament-এ Join করুন।
+            </p>
+        </div>
+
+        <div class="feature">
+            <h3>🏆 Tournaments</h3>
+            <p>
+                বিভিন্ন ধরনের Match খেলুন।
+            </p>
+        </div>
+
+        <div class="feature">
+            <h3>📱 Mobile Friendly</h3>
+            <p>
+                মোবাইল ও কম্পিউটার দুই জায়গাতেই ব্যবহারযোগ্য।
+            </p>
+        </div>
+
+    </section>
+
+</main>
+
+
+<footer>
+    © 2026 SB Tournament
+</footer>
+
+
+<script>
+
+function registerTournament(name){
+
+    localStorage.setItem(
+        "selectedTournament",
+        name
+    );
+
+    window.location.href =
+        "registration.html";
+}
+
+</script>
 
 </body>
 </html>
