@@ -1,1 +1,389 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SB Tournament - Match Management</title>
 
+<style>
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+    font-family:Arial,sans-serif;
+}
+
+body{
+    background:#f4f6fb;
+    color:#222;
+}
+
+.header{
+    background:#171a2b;
+    color:white;
+    padding:18px;
+    text-align:center;
+}
+
+.header h1{
+    font-size:24px;
+}
+
+.container{
+    width:94%;
+    max-width:1000px;
+    margin:25px auto;
+}
+
+.card{
+    background:white;
+    padding:20px;
+    margin-bottom:20px;
+    border-radius:14px;
+    box-shadow:0 4px 15px rgba(0,0,0,.08);
+}
+
+.card h2{
+    margin-bottom:18px;
+}
+
+.form-group{
+    margin-bottom:14px;
+}
+
+label{
+    display:block;
+    margin-bottom:6px;
+    font-weight:bold;
+}
+
+input,select{
+    width:100%;
+    padding:12px;
+    border:1px solid #ddd;
+    border-radius:8px;
+    font-size:15px;
+}
+
+button{
+    border:0;
+    padding:12px 18px;
+    border-radius:8px;
+    cursor:pointer;
+    font-weight:bold;
+}
+
+.add-btn{
+    background:#2563eb;
+    color:white;
+    width:100%;
+}
+
+.match{
+    border:1px solid #e5e7eb;
+    border-radius:12px;
+    padding:16px;
+    margin-top:14px;
+}
+
+.match h3{
+    margin-bottom:10px;
+}
+
+.info{
+    line-height:1.8;
+    color:#555;
+}
+
+.actions{
+    display:flex;
+    gap:8px;
+    margin-top:12px;
+    flex-wrap:wrap;
+}
+
+.copy{
+    background:#16a34a;
+    color:white;
+}
+
+.delete{
+    background:#dc2626;
+    color:white;
+}
+
+.status{
+    display:inline-block;
+    background:#fff7ed;
+    color:#c2410c;
+    padding:5px 10px;
+    border-radius:20px;
+    font-size:13px;
+    font-weight:bold;
+}
+
+.empty{
+    text-align:center;
+    color:#777;
+    padding:20px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+    <h1>🏆 SB Tournament</h1>
+    <p>P7 — Match Management</p>
+</div>
+
+<div class="container">
+
+    <div class="card">
+        <h2>➕ Create New Match</h2>
+
+        <div class="form-group">
+            <label>Tournament Name</label>
+            <input id="tournament" type="text"
+                   placeholder="যেমন: SB Free Fire Cup">
+        </div>
+
+        <div class="form-group">
+            <label>Match Date</label>
+            <input id="date" type="date">
+        </div>
+
+        <div class="form-group">
+            <label>Match Time</label>
+            <input id="time" type="time">
+        </div>
+
+        <div class="form-group">
+            <label>Room ID</label>
+            <input id="room" type="text"
+                   placeholder="Room ID">
+        </div>
+
+        <div class="form-group">
+            <label>Room Password</label>
+            <input id="password" type="text"
+                   placeholder="Room Password">
+        </div>
+
+        <div class="form-group">
+            <label>Status</label>
+            <select id="status">
+                <option value="Upcoming">Upcoming</option>
+                <option value="Live">Live</option>
+                <option value="Completed">Completed</option>
+            </select>
+        </div>
+
+        <button class="add-btn" onclick="addMatch()">
+            Create Match
+        </button>
+    </div>
+
+
+    <div class="card">
+        <h2>📋 Match List</h2>
+        <div id="matchList"></div>
+    </div>
+
+</div>
+
+
+<script>
+
+let matches =
+JSON.parse(localStorage.getItem("sb_matches")) || [];
+
+
+function saveMatches(){
+    localStorage.setItem(
+        "sb_matches",
+        JSON.stringify(matches)
+    );
+}
+
+
+function addMatch(){
+
+    const tournament =
+        document.getElementById("tournament").value.trim();
+
+    const date =
+        document.getElementById("date").value;
+
+    const time =
+        document.getElementById("time").value;
+
+    const room =
+        document.getElementById("room").value.trim();
+
+    const password =
+        document.getElementById("password").value.trim();
+
+    const status =
+        document.getElementById("status").value;
+
+
+    if(!tournament || !date || !time || !room || !password){
+
+        alert("সব তথ্য পূরণ করুন।");
+        return;
+    }
+
+
+    const match = {
+
+        id: Date.now(),
+
+        tournament,
+        date,
+        time,
+        room,
+        password,
+        status
+
+    };
+
+
+    matches.unshift(match);
+
+    saveMatches();
+
+    document.getElementById("tournament").value="";
+    document.getElementById("date").value="";
+    document.getElementById("time").value="";
+    document.getElementById("room").value="";
+    document.getElementById("password").value="";
+
+    renderMatches();
+}
+
+
+function deleteMatch(id){
+
+    if(!confirm("এই ম্যাচটি Delete করতে চান?")){
+        return;
+    }
+
+    matches =
+        matches.filter(match => match.id !== id);
+
+    saveMatches();
+
+    renderMatches();
+}
+
+
+function copyText(text){
+
+    navigator.clipboard.writeText(text);
+
+    alert("Copied!");
+}
+
+
+function renderMatches(){
+
+    const list =
+        document.getElementById("matchList");
+
+
+    if(matches.length === 0){
+
+        list.innerHTML =
+            `<div class="empty">
+                এখনো কোনো Match তৈরি করা হয়নি।
+             </div>`;
+
+        return;
+    }
+
+
+    list.innerHTML =
+        matches.map(match => `
+
+        <div class="match">
+
+            <h3>🏆 ${escapeHTML(match.tournament)}</h3>
+
+            <span class="status">
+                ${escapeHTML(match.status)}
+            </span>
+
+            <div class="info">
+
+                📅 Date:
+                ${escapeHTML(match.date)}
+                <br>
+
+                🕐 Time:
+                ${escapeHTML(match.time)}
+                <br>
+
+                🔑 Room ID:
+                ${escapeHTML(match.room)}
+                <br>
+
+                🔒 Password:
+                ${escapeHTML(match.password)}
+
+            </div>
+
+
+            <div class="actions">
+
+                <button
+                    class="copy"
+                    onclick="copyText('${safeJS(match.room)}')">
+                    Copy Room ID
+                </button>
+
+                <button
+                    class="copy"
+                    onclick="copyText('${safeJS(match.password)}')">
+                    Copy Password
+                </button>
+
+                <button
+                    class="delete"
+                    onclick="deleteMatch(${match.id})">
+                    Delete
+                </button>
+
+            </div>
+
+        </div>
+
+    `).join("");
+}
+
+
+function escapeHTML(text){
+
+    return String(text)
+        .replace(/&/g,"&amp;")
+        .replace(/</g,"&lt;")
+        .replace(/>/g,"&gt;")
+        .replace(/"/g,"&quot;")
+        .replace(/'/g,"&#039;");
+}
+
+
+function safeJS(text){
+
+    return String(text)
+        .replace(/\\/g,"\\\\")
+        .replace(/'/g,"\\'");
+}
+
+
+renderMatches();
+
+</script>
+
+</body>
+</html>
