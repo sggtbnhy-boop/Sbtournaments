@@ -1,512 +1,451 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html><html lang="bn">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>SB Tournament - Match History</title><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><style>
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+    font-family:Arial,sans-serif;
+}
 
-  <title>SB Tournament - Match History</title>
+body{
+    background:#f4f6fb;
+    color:#222;
+}
 
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: Arial, sans-serif;
+.header{
+    background:#171a2b;
+    color:white;
+    padding:18px;
+    text-align:center;
+}
+
+.header h1{
+    font-size:24px;
+}
+
+.container{
+    width:94%;
+    max-width:1000px;
+    margin:25px auto;
+}
+
+.back{
+    display:inline-block;
+    margin-bottom:15px;
+    color:#2563eb;
+    text-decoration:none;
+    font-weight:bold;
+}
+
+.summary{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:12px;
+    margin-bottom:20px;
+}
+
+.stat{
+    background:white;
+    padding:18px;
+    border-radius:12px;
+    text-align:center;
+    box-shadow:0 4px 15px rgba(0,0,0,.07);
+}
+
+.stat h3{
+    font-size:25px;
+    margin-bottom:5px;
+}
+
+.stat p{
+    color:#777;
+    font-size:14px;
+}
+
+.card{
+    background:white;
+    padding:20px;
+    margin-bottom:20px;
+    border-radius:14px;
+    box-shadow:0 4px 15px rgba(0,0,0,.08);
+}
+
+.card h2{
+    margin-bottom:15px;
+}
+
+.match{
+    border:1px solid #e5e7eb;
+    border-radius:12px;
+    padding:16px;
+    margin-top:14px;
+}
+
+.match h3{
+    margin-bottom:10px;
+}
+
+.info{
+    line-height:1.8;
+    color:#555;
+    margin-top:10px;
+}
+
+.status{
+    display:inline-block;
+    padding:5px 10px;
+    border-radius:20px;
+    font-size:13px;
+    font-weight:bold;
+}
+
+.upcoming{
+    background:#fff7ed;
+    color:#c2410c;
+}
+
+.live{
+    background:#dcfce7;
+    color:#15803d;
+}
+
+.completed{
+    background:#e5e7eb;
+    color:#374151;
+}
+
+.copy{
+    margin-top:12px;
+    background:#16a34a;
+    color:white;
+    border:0;
+    padding:10px 14px;
+    border-radius:8px;
+    font-weight:bold;
+}
+
+.empty,
+.loading,
+.error{
+    text-align:center;
+    padding:25px;
+}
+
+.empty{
+    color:#777;
+}
+
+.loading{
+    color:#555;
+}
+
+.error{
+    color:#dc2626;
+}
+
+@media(max-width:600px){
+
+    .summary{
+        grid-template-columns:1fr;
     }
 
-    body {
-      background: #f4f6fb;
-      color: #222;
+    .card{
+        padding:16px;
     }
 
-    .header {
-      background: linear-gradient(135deg, #6a11cb, #2575fc);
-      color: white;
-      text-align: center;
-      padding: 25px 15px;
-      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
-    }
-
-    .header h1 {
-      font-size: 25px;
-      margin-bottom: 6px;
-    }
-
-    .header p {
-      font-size: 14px;
-      opacity: 0.9;
-    }
-
-    .container {
-      max-width: 700px;
-      margin: 20px auto;
-      padding: 0 14px;
-    }
-
-    .summary {
-      background: white;
-      border-radius: 16px;
-      padding: 18px;
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
-      box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08);
-      margin-bottom: 18px;
-    }
-
-    .summary-box {
-      text-align: center;
-      background: #f4f6fb;
-      border-radius: 12px;
-      padding: 14px 5px;
-    }
-
-    .summary-box strong {
-      display: block;
-      font-size: 21px;
-      color: #2575fc;
-      margin-bottom: 4px;
-    }
-
-    .summary-box span {
-      color: #666;
-      font-size: 11px;
-    }
-
-    .section-title {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 12px;
-    }
-
-    .section-title h2 {
-      font-size: 20px;
-    }
-
-    .match-count {
-      background: #2575fc;
-      color: white;
-      padding: 5px 9px;
-      border-radius: 20px;
-      font-size: 11px;
-    }
-
-    .match-card {
-      background: white;
-      border-radius: 15px;
-      padding: 16px;
-      margin-bottom: 12px;
-      box-shadow: 0 3px 12px rgba(0, 0, 0, 0.07);
-    }
-
-    .match-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 13px;
-    }
-
-    .match-name {
-      font-weight: bold;
-      font-size: 16px;
-    }
-
-    .status {
-      font-size: 10px;
-      padding: 5px 8px;
-      border-radius: 20px;
-      font-weight: bold;
-    }
-
-    .completed {
-      background: #e7f8ed;
-      color: #16833b;
-    }
-
-    .pending {
-      background: #fff4d8;
-      color: #9a6a00;
-    }
-
-    .cancelled {
-      background: #ffe8e8;
-      color: #c62828;
-    }
-
-    .match-info {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 8px;
-      background: #f7f8fc;
-      border-radius: 10px;
-      padding: 12px 7px;
-    }
-
-    .info {
-      text-align: center;
-    }
-
-    .info strong {
-      display: block;
-      font-size: 17px;
-      color: #222;
-      margin-bottom: 4px;
-    }
-
-    .info span {
-      color: #777;
-      font-size: 10px;
-    }
-
-    .points {
-      color: #2575fc !important;
-    }
-
-    .date {
-      margin-top: 11px;
-      color: #888;
-      font-size: 11px;
-    }
-
-    .empty {
-      display: none;
-      text-align: center;
-      background: white;
-      border-radius: 15px;
-      padding: 45px 15px;
-      color: #888;
-      box-shadow: 0 3px 12px rgba(0, 0, 0, 0.07);
-    }
-
-    .empty-icon {
-      font-size: 48px;
-      margin-bottom: 10px;
-    }
-
-    .empty h3 {
-      color: #555;
-      margin-bottom: 6px;
-    }
-
-    .home-btn {
-      display: block;
-      text-align: center;
-      text-decoration: none;
-      background: #111827;
-      color: white;
-      padding: 14px;
-      border-radius: 10px;
-      margin-top: 20px;
-      font-weight: bold;
-    }
-
-    @media (max-width: 480px) {
-      .header h1 {
-        font-size: 22px;
-      }
-
-      .summary {
-        padding: 12px;
-      }
-
-      .summary-box {
-        padding: 12px 3px;
-      }
-
-      .summary-box strong {
-        font-size: 18px;
-      }
-
-      .match-card {
-        padding: 13px;
-      }
-
-      .match-name {
-        font-size: 14px;
-      }
-    }
-  </style>
-</head>
-
-<body>
-
-  <!-- Header -->
-  <div class="header">
-    <h1>🎮 SB Tournament</h1>
-    <p>Match History</p>
-  </div>
+}
+</style></head><body><div class="header">
+    <h1>🏆 SB Tournament</h1>
+    <p>P6 — Match History</p>
+</div><div class="container"><a class="back" href="index.html">
+    ← Back to Home
+</a>
 
 
-  <div class="container">
+<div class="summary">
 
-    <!-- Summary -->
-    <div class="summary">
-
-      <div class="summary-box">
-        <strong id="totalMatches">0</strong>
-        <span>Total Matches</span>
-      </div>
-
-      <div class="summary-box">
-        <strong id="totalWins">0</strong>
-        <span>Total Wins</span>
-      </div>
-
-      <div class="summary-box">
-        <strong id="totalPoints">0</strong>
-        <span>Total Points</span>
-      </div>
-
+    <div class="stat">
+        <h3 id="totalMatches">0</h3>
+        <p>Total Matches</p>
     </div>
 
-
-    <!-- Title -->
-    <div class="section-title">
-      <h2>📜 Match History</h2>
-      <span class="match-count" id="matchCount">0 Matches</span>
+    <div class="stat">
+        <h3 id="upcomingMatches">0</h3>
+        <p>Upcoming</p>
     </div>
 
+    <div class="stat">
+        <h3 id="completedMatches">0</h3>
+        <p>Completed</p>
+    </div>
 
-    <!-- Match List -->
+</div>
+
+
+<div class="card">
+
+    <h2>📋 Match History</h2>
+
     <div id="matchList">
 
-
-      <!-- Match 1 -->
-      <div class="match-card">
-
-        <div class="match-top">
-          <div class="match-name">
-            🏆 SB Battle #01
-          </div>
-
-          <span class="status completed">
-            COMPLETED
-          </span>
+        <div class="loading">
+            Match loading...
         </div>
-
-        <div class="match-info">
-
-          <div class="info">
-            <strong>1st</strong>
-            <span>Position</span>
-          </div>
-
-          <div class="info">
-            <strong>12</strong>
-            <span>Kills</span>
-          </div>
-
-          <div class="info">
-            <strong class="points">25</strong>
-            <span>Points</span>
-          </div>
-
-        </div>
-
-        <div class="date">
-          📅 09 September 2026
-        </div>
-
-      </div>
-
-
-      <!-- Match 2 -->
-      <div class="match-card">
-
-        <div class="match-top">
-          <div class="match-name">
-            🎮 SB Battle #02
-          </div>
-
-          <span class="status completed">
-            COMPLETED
-          </span>
-        </div>
-
-        <div class="match-info">
-
-          <div class="info">
-            <strong>3rd</strong>
-            <span>Position</span>
-          </div>
-
-          <div class="info">
-            <strong>7</strong>
-            <span>Kills</span>
-          </div>
-
-          <div class="info">
-            <strong class="points">15</strong>
-            <span>Points</span>
-          </div>
-
-        </div>
-
-        <div class="date">
-          📅 08 September 2026
-        </div>
-
-      </div>
-
-
-      <!-- Match 3 -->
-      <div class="match-card">
-
-        <div class="match-top">
-          <div class="match-name">
-            🔥 SB Battle #03
-          </div>
-
-          <span class="status pending">
-            PENDING
-          </span>
-        </div>
-
-        <div class="match-info">
-
-          <div class="info">
-            <strong>-</strong>
-            <span>Position</span>
-          </div>
-
-          <div class="info">
-            <strong>-</strong>
-            <span>Kills</span>
-          </div>
-
-          <div class="info">
-            <strong class="points">0</strong>
-            <span>Points</span>
-          </div>
-
-        </div>
-
-        <div class="date">
-          📅 Upcoming Match
-        </div>
-
-      </div>
-
 
     </div>
 
+</div>
 
-    <!-- Empty -->
-    <div id="emptyMessage" class="empty">
+</div><script>
 
-      <div class="empty-icon">🎮</div>
+/* =========================
+   SUPABASE CONFIG
+========================= */
 
-      <h3>No Match History</h3>
+const SUPABASE_URL =
+"https://ofcpuiubovcjxucqynyw.supabase.co";
 
-      <p>Your completed matches will appear here.</p>
+const SUPABASE_KEY =
+"sb_publishable_NpG4P_VRdesJJkkzuBoanw_mbM3ivFS";
 
-    </div>
-
-
-    <!-- Home -->
-    <a href="index.html" class="home-btn">
-      🏠 Back to Home
-    </a>
-
-  </div>
-
-
-  <script>
-
-    /*
-      SB TOURNAMENT
-      P13 - MATCH HISTORY
-
-      Demo data for now.
-      Later this page can be connected to Supabase.
-    */
+const supabaseClient =
+supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+);
 
 
-    const matches = [
+/* =========================
+   LOAD MATCH HISTORY
+========================= */
 
-      {
-        name: "SB Battle #01",
-        status: "completed",
-        position: 1,
-        kills: 12,
-        points: 25
-      },
+async function loadMatchHistory(){
 
-      {
-        name: "SB Battle #02",
-        status: "completed",
-        position: 3,
-        kills: 7,
-        points: 15
-      },
-
-      {
-        name: "SB Battle #03",
-        status: "pending",
-        position: 0,
-        kills: 0,
-        points: 0
-      }
-
-    ];
-
-
-    function updateSummary() {
-
-      const completedMatches =
-        matches.filter(match =>
-          match.status === "completed"
-        );
-
-      const wins =
-        completedMatches.filter(match =>
-          match.position === 1
-        ).length;
-
-      const points =
-        completedMatches.reduce(
-          (total, match) => total + match.points,
-          0
-        );
-
-
-      document.getElementById("totalMatches").textContent =
-        completedMatches.length;
-
-      document.getElementById("totalWins").textContent =
-        wins;
-
-      document.getElementById("totalPoints").textContent =
-        points;
-
-      document.getElementById("matchCount").textContent =
-        matches.length + " Matches";
-    }
-
-
-    function checkEmpty() {
-
-      const list =
+    const list =
         document.getElementById("matchList");
 
-      const empty =
-        document.getElementById("emptyMessage");
 
-      if (list.children.length === 0) {
-        empty.style.display = "block";
-      } else {
-        empty.style.display = "none";
-      }
+    list.innerHTML =
+        `<div class="loading">
+            Match loading...
+        </div>`;
 
+
+    const { data, error } =
+        await supabaseClient
+        .from("matches")
+        .select("*")
+        .order("id", {
+            ascending:false
+        });
+
+
+    if(error){
+
+        console.error(error);
+
+        list.innerHTML =
+        `<div class="error">
+            ❌ Match history load করা যায়নি।<br><br>
+            ${escapeHTML(error.message)}
+        </div>`;
+
+        return;
     }
 
 
-    updateSummary();
-    checkEmpty();
+    const matches = data || [];
 
-  </script>
 
-</body>
-  </html>
+    updateSummary(matches);
+
+    renderHistory(matches);
+}
+
+
+/* =========================
+   SUMMARY
+========================= */
+
+function updateSummary(matches){
+
+    const total =
+        matches.length;
+
+
+    const upcoming =
+        matches.filter(
+            match => match.status === "Upcoming"
+        ).length;
+
+
+    const completed =
+        matches.filter(
+            match => match.status === "Completed"
+        ).length;
+
+
+    document.getElementById(
+        "totalMatches"
+    ).textContent = total;
+
+
+    document.getElementById(
+        "upcomingMatches"
+    ).textContent = upcoming;
+
+
+    document.getElementById(
+        "completedMatches"
+    ).textContent = completed;
+}
+
+
+/* =========================
+   RENDER HISTORY
+========================= */
+
+function renderHistory(matches){
+
+    const list =
+        document.getElementById("matchList");
+
+
+    if(matches.length === 0){
+
+        list.innerHTML =
+        `<div class="empty">
+            এখনো কোনো Match History নেই।
+        </div>`;
+
+        return;
+    }
+
+
+    list.innerHTML =
+        matches.map(match => {
+
+            let statusClass =
+                "upcoming";
+
+
+            if(match.status === "Live"){
+                statusClass = "live";
+            }
+
+
+            if(match.status === "Completed"){
+                statusClass = "completed";
+            }
+
+
+            return `
+
+            <div class="match">
+
+                <h3>
+                    🏆
+                    ${escapeHTML(match.tournament)}
+                </h3>
+
+
+                <span class="status ${statusClass}">
+                    ${escapeHTML(match.status)}
+                </span>
+
+
+                <div class="info">
+
+                    📅 Date:
+                    ${escapeHTML(match.date)}
+
+                    <br>
+
+                    🕐 Time:
+                    ${escapeHTML(match.time)}
+
+                    <br>
+
+                    🔑 Room ID:
+                    ${escapeHTML(match.room)}
+
+                    <br>
+
+                    🔒 Password:
+                    ${escapeHTML(match.password)}
+
+                </div>
+
+
+                <button
+                    class="copy"
+                    onclick="copyText('${safeJS(match.room)}')">
+
+                    📋 Copy Room ID
+
+                </button>
+
+            </div>
+
+            `;
+
+        }).join("");
+}
+
+
+/* =========================
+   COPY
+========================= */
+
+async function copyText(text){
+
+    try{
+
+        await navigator.clipboard.writeText(text);
+
+        alert("✅ Room ID Copied!");
+
+    }catch(error){
+
+        alert(
+            "Room ID copy করা যায়নি।"
+        );
+    }
+}
+
+
+/* =========================
+   SECURITY
+========================= */
+
+function escapeHTML(text){
+
+    return String(text ?? "")
+        .replace(/&/g,"&amp;")
+        .replace(/</g,"&lt;")
+        .replace(/>/g,"&gt;")
+        .replace(/"/g,"&quot;")
+        .replace(/'/g,"&#039;");
+}
+
+
+function safeJS(text){
+
+    return String(text ?? "")
+        .replace(/\\/g,"\\\\")
+        .replace(/'/g,"\\'")
+        .replace(/\r/g,"\\r")
+        .replace(/\n/g,"\\n");
+}
+
+
+/* =========================
+   START
+========================= */
+
+loadMatchHistory();
+
+</script></body>
+      </html>
