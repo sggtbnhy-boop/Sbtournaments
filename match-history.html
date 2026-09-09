@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>SB Tournament - Match History</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      background: #f4f6fb;
+      color: #222;
+    }
+
+    .header {
+      background: linear-gradient(135deg, #6a11cb, #2575fc);
+      color: white;
+      text-align: center;
+      padding: 25px 15px;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
+    }
+
+    .header h1 {
+      font-size: 25px;
+      margin-bottom: 6px;
+    }
+
+    .header p {
+      font-size: 14px;
+      opacity: 0.9;
+    }
+
+    .container {
+      max-width: 700px;
+      margin: 20px auto;
+      padding: 0 14px;
+    }
+
+    .summary {
+      background: white;
+      border-radius: 16px;
+      padding: 18px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08);
+      margin-bottom: 18px;
+    }
+
+    .summary-box {
+      text-align: center;
+      background: #f4f6fb;
+      border-radius: 12px;
+      padding: 14px 5px;
+    }
+
+    .summary-box strong {
+      display: block;
+      font-size: 21px;
+      color: #2575fc;
+      margin-bottom: 4px;
+    }
+
+    .summary-box span {
+      color: #666;
+      font-size: 11px;
+    }
+
+    .section-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .section-title h2 {
+      font-size: 20px;
+    }
+
+    .match-count {
+      background: #2575fc;
+      color: white;
+      padding: 5px 9px;
+      border-radius: 20px;
+      font-size: 11px;
+    }
+
+    .match-card {
+      background: white;
+      border-radius: 15px;
+      padding: 16px;
+      margin-bottom: 12px;
+      box-shadow: 0 3px 12px rgba(0, 0, 0, 0.07);
+    }
+
+    .match-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 13px;
+    }
+
+    .match-name {
+      font-weight: bold;
+      font-size: 16px;
+    }
+
+    .status {
+      font-size: 10px;
+      padding: 5px 8px;
+      border-radius: 20px;
+      font-weight: bold;
+    }
+
+    .completed {
+      background: #e7f8ed;
+      color: #16833b;
+    }
+
+    .pending {
+      background: #fff4d8;
+      color: #9a6a00;
+    }
+
+    .cancelled {
+      background: #ffe8e8;
+      color: #c62828;
+    }
+
+    .match-info {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      background: #f7f8fc;
+      border-radius: 10px;
+      padding: 12px 7px;
+    }
+
+    .info {
+      text-align: center;
+    }
+
+    .info strong {
+      display: block;
+      font-size: 17px;
+      color: #222;
+      margin-bottom: 4px;
+    }
+
+    .info span {
+      color: #777;
+      font-size: 10px;
+    }
+
+    .points {
+      color: #2575fc !important;
+    }
+
+    .date {
+      margin-top: 11px;
+      color: #888;
+      font-size: 11px;
+    }
+
+    .empty {
+      display: none;
+      text-align: center;
+      background: white;
+      border-radius: 15px;
+      padding: 45px 15px;
+      color: #888;
+      box-shadow: 0 3px 12px rgba(0, 0, 0, 0.07);
+    }
+
+    .empty-icon {
+      font-size: 48px;
+      margin-bottom: 10px;
+    }
+
+    .empty h3 {
+      color: #555;
+      margin-bottom: 6px;
+    }
+
+    .home-btn {
+      display: block;
+      text-align: center;
+      text-decoration: none;
+      background: #111827;
+      color: white;
+      padding: 14px;
+      border-radius: 10px;
+      margin-top: 20px;
+      font-weight: bold;
+    }
+
+    @media (max-width: 480px) {
+      .header h1 {
+        font-size: 22px;
+      }
+
+      .summary {
+        padding: 12px;
+      }
+
+      .summary-box {
+        padding: 12px 3px;
+      }
+
+      .summary-box strong {
+        font-size: 18px;
+      }
+
+      .match-card {
+        padding: 13px;
+      }
+
+      .match-name {
+        font-size: 14px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Header -->
+  <div class="header">
+    <h1>🎮 SB Tournament</h1>
+    <p>Match History</p>
+  </div>
+
+
+  <div class="container">
+
+    <!-- Summary -->
+    <div class="summary">
+
+      <div class="summary-box">
+        <strong id="totalMatches">0</strong>
+        <span>Total Matches</span>
+      </div>
+
+      <div class="summary-box">
+        <strong id="totalWins">0</strong>
+        <span>Total Wins</span>
+      </div>
+
+      <div class="summary-box">
+        <strong id="totalPoints">0</strong>
+        <span>Total Points</span>
+      </div>
+
+    </div>
+
+
+    <!-- Title -->
+    <div class="section-title">
+      <h2>📜 Match History</h2>
+      <span class="match-count" id="matchCount">0 Matches</span>
+    </div>
+
+
+    <!-- Match List -->
+    <div id="matchList">
+
+
+      <!-- Match 1 -->
+      <div class="match-card">
+
+        <div class="match-top">
+          <div class="match-name">
+            🏆 SB Battle #01
+          </div>
+
+          <span class="status completed">
+            COMPLETED
+          </span>
+        </div>
+
+        <div class="match-info">
+
+          <div class="info">
+            <strong>1st</strong>
+            <span>Position</span>
+          </div>
+
+          <div class="info">
+            <strong>12</strong>
+            <span>Kills</span>
+          </div>
+
+          <div class="info">
+            <strong class="points">25</strong>
+            <span>Points</span>
+          </div>
+
+        </div>
+
+        <div class="date">
+          📅 09 September 2026
+        </div>
+
+      </div>
+
+
+      <!-- Match 2 -->
+      <div class="match-card">
+
+        <div class="match-top">
+          <div class="match-name">
+            🎮 SB Battle #02
+          </div>
+
+          <span class="status completed">
+            COMPLETED
+          </span>
+        </div>
+
+        <div class="match-info">
+
+          <div class="info">
+            <strong>3rd</strong>
+            <span>Position</span>
+          </div>
+
+          <div class="info">
+            <strong>7</strong>
+            <span>Kills</span>
+          </div>
+
+          <div class="info">
+            <strong class="points">15</strong>
+            <span>Points</span>
+          </div>
+
+        </div>
+
+        <div class="date">
+          📅 08 September 2026
+        </div>
+
+      </div>
+
+
+      <!-- Match 3 -->
+      <div class="match-card">
+
+        <div class="match-top">
+          <div class="match-name">
+            🔥 SB Battle #03
+          </div>
+
+          <span class="status pending">
+            PENDING
+          </span>
+        </div>
+
+        <div class="match-info">
+
+          <div class="info">
+            <strong>-</strong>
+            <span>Position</span>
+          </div>
+
+          <div class="info">
+            <strong>-</strong>
+            <span>Kills</span>
+          </div>
+
+          <div class="info">
+            <strong class="points">0</strong>
+            <span>Points</span>
+          </div>
+
+        </div>
+
+        <div class="date">
+          📅 Upcoming Match
+        </div>
+
+      </div>
+
+
+    </div>
+
+
+    <!-- Empty -->
+    <div id="emptyMessage" class="empty">
+
+      <div class="empty-icon">🎮</div>
+
+      <h3>No Match History</h3>
+
+      <p>Your completed matches will appear here.</p>
+
+    </div>
+
+
+    <!-- Home -->
+    <a href="index.html" class="home-btn">
+      🏠 Back to Home
+    </a>
+
+  </div>
+
+
+  <script>
+
+    /*
+      SB TOURNAMENT
+      P13 - MATCH HISTORY
+
+      Demo data for now.
+      Later this page can be connected to Supabase.
+    */
+
+
+    const matches = [
+
+      {
+        name: "SB Battle #01",
+        status: "completed",
+        position: 1,
+        kills: 12,
+        points: 25
+      },
+
+      {
+        name: "SB Battle #02",
+        status: "completed",
+        position: 3,
+        kills: 7,
+        points: 15
+      },
+
+      {
+        name: "SB Battle #03",
+        status: "pending",
+        position: 0,
+        kills: 0,
+        points: 0
+      }
+
+    ];
+
+
+    function updateSummary() {
+
+      const completedMatches =
+        matches.filter(match =>
+          match.status === "completed"
+        );
+
+      const wins =
+        completedMatches.filter(match =>
+          match.position === 1
+        ).length;
+
+      const points =
+        completedMatches.reduce(
+          (total, match) => total + match.points,
+          0
+        );
+
+
+      document.getElementById("totalMatches").textContent =
+        completedMatches.length;
+
+      document.getElementById("totalWins").textContent =
+        wins;
+
+      document.getElementById("totalPoints").textContent =
+        points;
+
+      document.getElementById("matchCount").textContent =
+        matches.length + " Matches";
+    }
+
+
+    function checkEmpty() {
+
+      const list =
+        document.getElementById("matchList");
+
+      const empty =
+        document.getElementById("emptyMessage");
+
+      if (list.children.length === 0) {
+        empty.style.display = "block";
+      } else {
+        empty.style.display = "none";
+      }
+
+    }
+
+
+    updateSummary();
+    checkEmpty();
+
+  </script>
+
+</body>
+  </html>
