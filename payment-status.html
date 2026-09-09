@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>SB Tournament - Payment Status</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      background: #f3f4f6;
+      color: #111827;
+    }
+
+    header {
+      background: #111827;
+      color: white;
+      padding: 20px;
+      text-align: center;
+    }
+
+    header h1 {
+      font-size: 25px;
+      margin-bottom: 5px;
+    }
+
+    header p {
+      color: #cbd5e1;
+      font-size: 14px;
+    }
+
+    .container {
+      width: 92%;
+      max-width: 600px;
+      margin: 35px auto;
+    }
+
+    .card {
+      background: white;
+      padding: 25px;
+      border-radius: 15px;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+    }
+
+    h2 {
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 7px;
+      font-weight: bold;
+      font-size: 14px;
+    }
+
+    input {
+      width: 100%;
+      padding: 13px;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      outline: none;
+      margin-bottom: 15px;
+      font-size: 15px;
+    }
+
+    input:focus {
+      border-color: #2563eb;
+    }
+
+    button {
+      width: 100%;
+      padding: 13px;
+      border: none;
+      border-radius: 8px;
+      background: #2563eb;
+      color: white;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #1d4ed8;
+    }
+
+    .result {
+      display: none;
+      margin-top: 25px;
+      padding: 20px;
+      border-radius: 12px;
+      background: #f9fafb;
+    }
+
+    .row {
+      display: flex;
+      justify-content: space-between;
+      gap: 15px;
+      padding: 10px 0;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .row:last-child {
+      border-bottom: none;
+    }
+
+    .label {
+      color: #6b7280;
+    }
+
+    .value {
+      font-weight: bold;
+      text-align: right;
+      word-break: break-word;
+    }
+
+    .status {
+      display: inline-block;
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 13px;
+    }
+
+    .pending {
+      background: #fef3c7;
+      color: #92400e;
+    }
+
+    .approved {
+      background: #dcfce7;
+      color: #166534;
+    }
+
+    .rejected {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+
+    .message {
+      display: none;
+      margin-top: 15px;
+      padding: 12px;
+      border-radius: 8px;
+      text-align: center;
+    }
+
+    .error {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+
+    .loading {
+      display: none;
+      text-align: center;
+      margin-top: 15px;
+      color: #555;
+    }
+
+    .home-btn {
+      display: block;
+      margin-top: 20px;
+      text-align: center;
+      text-decoration: none;
+      color: #2563eb;
+      font-weight: bold;
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <h1>SB Tournament</h1>
+  <p>Payment Status</p>
+</header>
+
+<div class="container">
+
+  <div class="card">
+
+    <h2>Check Payment</h2>
+
+    <label for="transactionId">
+      Transaction ID
+    </label>
+
+    <input
+      type="text"
+      id="transactionId"
+      placeholder="Enter your Transaction ID"
+      autocomplete="off"
+    >
+
+    <button onclick="checkPayment()">
+      Check Payment
+    </button>
+
+    <div id="loading" class="loading">
+      Checking payment...
+    </div>
+
+    <div id="errorMessage" class="message error"></div>
+
+    <div id="result" class="result">
+
+      <div class="row">
+        <span class="label">Player</span>
+        <span class="value" id="playerName">-</span>
+      </div>
+
+      <div class="row">
+        <span class="label">Phone</span>
+        <span class="value" id="phone">-</span>
+      </div>
+
+      <div class="row">
+        <span class="label">Payment Method</span>
+        <span class="value" id="method">-</span>
+      </div>
+
+      <div class="row">
+        <span class="label">Transaction ID</span>
+        <span class="value" id="transaction">-</span>
+      </div>
+
+      <div class="row">
+        <span class="label">Amount</span>
+        <span class="value" id="amount">-</span>
+      </div>
+
+      <div class="row">
+        <span class="label">Status</span>
+        <span
+          class="value"
+          id="status">
+        </span>
+      </div>
+
+      <div class="row">
+        <span class="label">Date</span>
+        <span class="value" id="date">-</span>
+      </div>
+
+    </div>
+
+    <a class="home-btn" href="index.html">
+      ← Back to Home
+    </a>
+
+  </div>
+
+</div>
+
+<script>
+
+  /* =====================================
+     SUPABASE CONFIG
+     ===================================== */
+
+  const SUPABASE_URL =
+    "https://ofcpuiubovcjxucqynyw.supabase.co";
+
+  const SUPABASE_PUBLISHABLE_KEY =
+    "sb_publishable_NpG4P_VRdesJJkkzuBoanw_mbM3ivFS";
+
+  const supabaseClient =
+    supabase.createClient(
+      SUPABASE_URL,
+      SUPABASE_PUBLISHABLE_KEY
+    );
+
+
+  /* =====================================
+     CHECK PAYMENT
+     ===================================== */
+
+  async function checkPayment() {
+
+    const transactionId =
+      document
+        .getElementById("transactionId")
+        .value
+        .trim();
+
+    const loading =
+      document.getElementById("loading");
+
+    const result =
+      document.getElementById("result");
+
+    const errorBox =
+      document.getElementById("errorMessage");
+
+
+    result.style.display = "none";
+    errorBox.style.display = "none";
+
+
+    if (!transactionId) {
+
+      showError(
+        "Please enter your Transaction ID."
+      );
+
+      return;
+    }
+
+
+    loading.style.display = "block";
+
+
+    const { data, error } =
+      await supabaseClient
+        .from("payments")
+        .select("*")
+        .eq("transaction_id", transactionId)
+        .limit(1);
+
+
+    loading.style.display = "none";
+
+
+    if (error) {
+
+      console.error(error);
+
+      showError(
+        "Could not check payment: " +
+        error.message
+      );
+
+      return;
+    }
+
+
+    if (!data || data.length === 0) {
+
+      showError(
+        "Payment not found. Please check your Transaction ID."
+      );
+
+      return;
+    }
+
+
+    const payment = data[0];
+
+
+    document.getElementById(
+      "playerName"
+    ).textContent =
+      payment.player_name ||
+      payment.name ||
+      "-";
+
+
+    document.getElementById(
+      "phone"
+    ).textContent =
+      payment.phone ||
+      payment.mobile ||
+      "-";
+
+
+    document.getElementById(
+      "method"
+    ).textContent =
+      payment.payment_method ||
+      payment.method ||
+      "-";
+
+
+    document.getElementById(
+      "transaction"
+    ).textContent =
+      payment.transaction_id ||
+      payment.txn_id ||
+      "-";
+
+
+    document.getElementById(
+      "amount"
+    ).textContent =
+      payment.amount ||
+      "-";
+
+
+    const statusElement =
+      document.getElementById("status");
+
+    const status =
+      String(
+        payment.status || "pending"
+      ).toLowerCase();
+
+
+    statusElement.textContent =
+      status.toUpperCase();
+
+    statusElement.className =
+      "value status " + status;
+
+
+    document.getElementById(
+      "date"
+    ).textContent =
+      payment.created_at
+        ? new Date(
+            payment.created_at
+          ).toLocaleString()
+        : "-";
+
+
+    result.style.display = "block";
+  }
+
+
+  /* =====================================
+     ERROR MESSAGE
+     ===================================== */
+
+  function showError(message) {
+
+    const errorBox =
+      document.getElementById(
+        "errorMessage"
+      );
+
+    errorBox.textContent = message;
+    errorBox.style.display = "block";
+  }
+
+
+  /* =====================================
+     ENTER KEY
+     ===================================== */
+
+  document
+    .getElementById("transactionId")
+    .addEventListener(
+      "keydown",
+      function(event) {
+
+        if (event.key === "Enter") {
+          checkPayment();
+        }
+
+      }
+    );
+
+</script>
+
+</body>
+  </html>
