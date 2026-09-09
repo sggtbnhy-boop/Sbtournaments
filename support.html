@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>SB Tournament - Support</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      background: #f4f6fb;
+      color: #222;
+    }
+
+    .header {
+      background: linear-gradient(135deg, #6a11cb, #2575fc);
+      color: white;
+      text-align: center;
+      padding: 26px 15px;
+      box-shadow: 0 3px 10px rgba(0,0,0,.15);
+    }
+
+    .header h1 {
+      font-size: 25px;
+      margin-bottom: 6px;
+    }
+
+    .header p {
+      font-size: 14px;
+      opacity: .9;
+    }
+
+    .container {
+      max-width: 650px;
+      margin: 20px auto;
+      padding: 0 14px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 15px;
+      box-shadow: 0 3px 12px rgba(0,0,0,.07);
+    }
+
+    .card h2 {
+      color: #2575fc;
+      font-size: 20px;
+      margin-bottom: 10px;
+    }
+
+    .card p {
+      color: #666;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .support-item {
+      display: flex;
+      align-items: center;
+      gap: 13px;
+      padding: 14px 0;
+      border-bottom: 1px solid #eee;
+    }
+
+    .support-item:last-child {
+      border-bottom: none;
+    }
+
+    .support-icon {
+      width: 45px;
+      height: 45px;
+      border-radius: 50%;
+      background: #2575fc;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 21px;
+      flex-shrink: 0;
+    }
+
+    .support-text {
+      flex: 1;
+    }
+
+    .support-text h3 {
+      font-size: 15px;
+      margin-bottom: 4px;
+    }
+
+    .support-text p {
+      font-size: 12px;
+      color: #777;
+    }
+
+    .contact-btn {
+      display: inline-block;
+      margin-top: 7px;
+      background: #2575fc;
+      color: white;
+      text-decoration: none;
+      padding: 8px 12px;
+      border-radius: 7px;
+      font-size: 12px;
+    }
+
+    .faq {
+      padding: 13px 0;
+      border-bottom: 1px solid #eee;
+    }
+
+    .faq:last-child {
+      border-bottom: none;
+    }
+
+    .question {
+      font-weight: bold;
+      font-size: 14px;
+      margin-bottom: 6px;
+    }
+
+    .answer {
+      color: #666;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .notice {
+      background: #fff7df;
+      border-left: 4px solid #f0ad00;
+    }
+
+    .notice h2 {
+      color: #9a6a00;
+    }
+
+    .home-btn {
+      display: block;
+      text-align: center;
+      text-decoration: none;
+      background: #111827;
+      color: white;
+      padding: 14px;
+      border-radius: 10px;
+      margin: 20px 0;
+      font-weight: bold;
+    }
+
+    .footer {
+      text-align: center;
+      color: #999;
+      font-size: 11px;
+      padding: 10px 0 25px;
+    }
+
+    @media (max-width: 480px) {
+      .header h1 {
+        font-size: 22px;
+      }
+
+      .card {
+        padding: 16px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="header">
+    <h1>🆘 SB Tournament</h1>
+    <p>Support Center</p>
+  </div>
+
+
+  <div class="container">
+
+    <!-- Welcome -->
+    <div class="card">
+      <h2>👋 How can we help?</h2>
+
+      <p>
+        Welcome to SB Tournament Support.
+        If you have a problem with registration, matches,
+        results, or your account, check the information below.
+      </p>
+    </div>
+
+
+    <!-- Contact -->
+    <div class="card">
+
+      <h2>📞 Contact Support</h2>
+
+      <div class="support-item">
+
+        <div class="support-icon">📧</div>
+
+        <div class="support-text">
+
+          <h3>Email Support</h3>
+
+          <p>
+            Contact the tournament administrator by email.
+          </p>
+
+          <a
+            href="mailto:support@example.com"
+            class="contact-btn">
+            Send Email
+          </a>
+
+        </div>
+
+      </div>
+
+
+      <div class="support-item">
+
+        <div class="support-icon">💬</div>
+
+        <div class="support-text">
+
+          <h3>Tournament Support</h3>
+
+          <p>
+            For match-related problems, contact the official
+            tournament administrator.
+          </p>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- FAQ -->
+    <div class="card">
+
+      <h2>❓ Frequently Asked Questions</h2>
+
+      <div class="faq">
+
+        <div class="question">
+          How do I join a tournament?
+        </div>
+
+        <div class="answer">
+          Open the tournament list, choose an available match,
+          and complete the registration process.
+        </div>
+
+      </div>
+
+
+      <div class="faq">
+
+        <div class="question">
+          Where can I see my matches?
+        </div>
+
+        <div class="answer">
+          Open the Match History page to see your available
+          match information and results.
+        </div>
+
+      </div>
+
+
+      <div class="faq">
+
+        <div class="question">
+          What if my result is incorrect?
+        </div>
+
+        <div class="answer">
+          Contact the tournament administrator and provide
+          the relevant match information for review.
+        </div>
+
+      </div>
+
+
+      <div class="faq">
+
+        <div class="question">
+          What if I cannot join a match?
+        </div>
+
+        <div class="answer">
+          Check the match time and instructions first.
+          If the problem continues, contact tournament support.
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- Important Notice -->
+    <div class="card notice">
+
+      <h2>⚠️ Important</h2>
+
+      <p>
+        Never share your password, verification code, or other
+        private account information with anyone.
+        Only use the official tournament support method.
+      </p>
+
+    </div>
+
+
+    <!-- Home -->
+    <a href="index.html" class="home-btn">
+      🏠 Back to Home
+    </a>
+
+  </div>
+
+
+  <div class="footer">
+    © 2026 SB Tournament • Support Center
+  </div>
+
+</body>
+  </html>
