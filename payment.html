@@ -1,0 +1,333 @@
+<!DOCTYPE html><html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>SB Tournament - Payment</title><style>
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+    font-family:Arial,sans-serif;
+}
+
+body{
+    background:#f4f6fb;
+    color:#222;
+}
+
+.header{
+    background:#171a2b;
+    color:white;
+    text-align:center;
+    padding:20px;
+}
+
+.header h1{
+    font-size:24px;
+    margin-bottom:6px;
+}
+
+.container{
+    width:94%;
+    max-width:600px;
+    margin:25px auto;
+}
+
+.card{
+    background:white;
+    padding:20px;
+    margin-bottom:18px;
+    border-radius:14px;
+    box-shadow:0 4px 15px rgba(0,0,0,.08);
+}
+
+.card h2{
+    margin-bottom:16px;
+}
+
+.payment-option{
+    border:2px solid #e5e7eb;
+    border-radius:12px;
+    padding:16px;
+    margin-bottom:12px;
+    cursor:pointer;
+}
+
+.payment-option:hover{
+    border-color:#2563eb;
+}
+
+.payment-option input{
+    margin-right:8px;
+}
+
+.payment-info{
+    background:#f8fafc;
+    padding:14px;
+    border-radius:10px;
+    margin-top:12px;
+    line-height:1.8;
+}
+
+.form-group{
+    margin-bottom:15px;
+}
+
+label{
+    display:block;
+    font-weight:bold;
+    margin-bottom:7px;
+}
+
+input{
+    width:100%;
+    padding:12px;
+    border:1px solid #ddd;
+    border-radius:8px;
+    font-size:15px;
+}
+
+.submit-btn{
+    width:100%;
+    border:0;
+    background:#2563eb;
+    color:white;
+    padding:13px;
+    border-radius:9px;
+    font-weight:bold;
+    font-size:16px;
+    cursor:pointer;
+}
+
+.status{
+    margin-top:15px;
+    padding:12px;
+    background:#fff7ed;
+    color:#c2410c;
+    border-radius:9px;
+    text-align:center;
+    font-weight:bold;
+}
+
+.note{
+    color:#666;
+    font-size:13px;
+    line-height:1.6;
+    margin-top:12px;
+}
+</style></head><body><div class="header">
+    <h1>🏆 SB Tournament</h1>
+    <p>Payment System — P1</p>
+</div><div class="container"><div class="card">
+
+    <h2>💳 Tournament Payment</h2>
+
+    <div class="form-group">
+        <label>Registration ID</label>
+
+        <input
+            id="registrationId"
+            type="text"
+            placeholder="Registration ID">
+    </div>
+
+    <div class="form-group">
+        <label>Payment Amount</label>
+
+        <input
+            id="amount"
+            type="number"
+            placeholder="যেমন: 50">
+    </div>
+
+</div>
+
+
+<div class="card">
+
+    <h2>📱 Payment Method</h2>
+
+    <label class="payment-option">
+        <input
+            type="radio"
+            name="paymentMethod"
+            value="bKash"
+            onchange="showPayment('bKash')">
+
+        🟣 bKash
+    </label>
+
+    <label class="payment-option">
+        <input
+            type="radio"
+            name="paymentMethod"
+            value="Nagad"
+            onchange="showPayment('Nagad')">
+
+        🟠 Nagad
+    </label>
+
+
+    <div
+        id="paymentInfo"
+        class="payment-info">
+
+        Payment method নির্বাচন করুন।
+
+    </div>
+
+</div>
+
+
+<div class="card">
+
+    <h2>🔢 Transaction Information</h2>
+
+    <div class="form-group">
+
+        <label>Transaction ID</label>
+
+        <input
+            id="transactionId"
+            type="text"
+            placeholder="আপনার Transaction ID দিন">
+
+    </div>
+
+    <button
+        class="submit-btn"
+        onclick="submitPayment()">
+
+        Submit Payment
+
+    </button>
+
+    <div
+        id="status"
+        class="status"
+        style="display:none;">
+
+    </div>
+
+    <p class="note">
+        Payment করার পরে সঠিক Transaction ID দিন।
+        Admin যাচাই করার পর payment approve করা হবে।
+    </p>
+
+</div>
+
+</div><script>
+
+const paymentNumbers = {
+
+    bKash: "01825265553",
+
+    Nagad: "01703610065"
+
+};
+
+
+function showPayment(method){
+
+    const info =
+        document.getElementById("paymentInfo");
+
+    if(method === "bKash"){
+
+        info.innerHTML = `
+            🟣 <b>bKash Payment</b><br><br>
+            Send Money করুন:<br>
+            <b>${paymentNumbers.bKash}</b><br><br>
+            Payment করার পরে Transaction ID দিন।
+        `;
+
+    }
+
+    if(method === "Nagad"){
+
+        info.innerHTML = `
+            🟠 <b>Nagad Payment</b><br><br>
+            Send Money করুন:<br>
+            <b>${paymentNumbers.Nagad}</b><br><br>
+            Payment করার পরে Transaction ID দিন।
+        `;
+
+    }
+}
+
+
+function submitPayment(){
+
+    const registrationId =
+        document
+        .getElementById("registrationId")
+        .value
+        .trim();
+
+    const amount =
+        document
+        .getElementById("amount")
+        .value
+        .trim();
+
+    const transactionId =
+        document
+        .getElementById("transactionId")
+        .value
+        .trim();
+
+
+    const method =
+        document.querySelector(
+            'input[name="paymentMethod"]:checked'
+        );
+
+
+    if(!registrationId){
+
+        alert("Registration ID দিন।");
+        return;
+    }
+
+
+    if(!amount){
+
+        alert("Payment amount দিন।");
+        return;
+    }
+
+
+    if(!method){
+
+        alert("bKash অথবা Nagad নির্বাচন করুন।");
+        return;
+    }
+
+
+    if(!transactionId){
+
+        alert("Transaction ID দিন।");
+        return;
+    }
+
+
+    const status =
+        document.getElementById("status");
+
+
+    status.style.display = "block";
+
+    status.innerHTML =
+        "⏳ Payment submitted — Pending verification";
+
+
+    /*
+      P1:
+      এখানে এখনো Supabase save করা হচ্ছে না।
+      P2-তে payment database + admin verification
+      যোগ করা হবে।
+    */
+
+}
+
+</script></body>
+      </html>
