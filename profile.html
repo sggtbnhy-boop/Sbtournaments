@@ -1,1 +1,259 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+  <title>SB Tournament - Profile</title>
+
+  <style>
+    *{
+      box-sizing:border-box;
+      margin:0;
+      padding:0;
+      font-family:Arial,sans-serif;
+    }
+
+    body{
+      background:#f4f6fb;
+      color:#222;
+    }
+
+    .header{
+      background:linear-gradient(135deg,#6a11cb,#2575fc);
+      color:white;
+      text-align:center;
+      padding:25px 15px;
+    }
+
+    .header h1{
+      font-size:25px;
+      margin-bottom:6px;
+    }
+
+    .container{
+      max-width:600px;
+      margin:20px auto;
+      padding:0 15px;
+    }
+
+    .profile-card{
+      background:white;
+      border-radius:18px;
+      padding:25px 18px;
+      text-align:center;
+      box-shadow:0 4px 15px rgba(0,0,0,.08);
+    }
+
+    .avatar{
+      width:85px;
+      height:85px;
+      margin:auto;
+      border-radius:50%;
+      background:#2575fc;
+      color:white;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:42px;
+    }
+
+    .profile-card h2{
+      margin-top:12px;
+      font-size:22px;
+    }
+
+    .uid{
+      margin-top:5px;
+      color:#777;
+      font-size:14px;
+    }
+
+    .stats{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:10px;
+      margin-top:22px;
+    }
+
+    .stat{
+      background:#f4f6fb;
+      border-radius:12px;
+      padding:15px 5px;
+    }
+
+    .stat strong{
+      display:block;
+      font-size:21px;
+      color:#2575fc;
+    }
+
+    .stat span{
+      font-size:12px;
+      color:#666;
+    }
+
+    .info-card{
+      background:white;
+      margin-top:15px;
+      padding:18px;
+      border-radius:15px;
+      box-shadow:0 3px 12px rgba(0,0,0,.07);
+    }
+
+    .info-card h3{
+      margin-bottom:15px;
+    }
+
+    .row{
+      display:flex;
+      justify-content:space-between;
+      padding:12px 0;
+      border-bottom:1px solid #eee;
+      font-size:14px;
+    }
+
+    .row:last-child{
+      border-bottom:0;
+    }
+
+    .label{
+      color:#777;
+    }
+
+    .value{
+      font-weight:bold;
+    }
+
+    .home-btn{
+      display:block;
+      text-align:center;
+      text-decoration:none;
+      background:#111827;
+      color:white;
+      padding:14px;
+      border-radius:10px;
+      margin-top:18px;
+      font-weight:bold;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="header">
+    <h1>👤 SB Tournament</h1>
+    <p>Player Profile</p>
+  </div>
+
+  <div class="container">
+
+    <div class="profile-card">
+
+      <div class="avatar">👤</div>
+
+      <h2 id="playerName">Player</h2>
+
+      <div class="uid">
+        Free Fire UID:
+        <span id="playerUid">Not Set</span>
+      </div>
+
+      <div class="stats">
+
+        <div class="stat">
+          <strong id="matches">0</strong>
+          <span>Matches</span>
+        </div>
+
+        <div class="stat">
+          <strong id="wins">0</strong>
+          <span>Wins</span>
+        </div>
+
+        <div class="stat">
+          <strong id="points">0</strong>
+          <span>Points</span>
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <div class="info-card">
+
+      <h3>📋 Player Information</h3>
+
+      <div class="row">
+        <span class="label">Player Name</span>
+        <span class="value" id="infoName">Player</span>
+      </div>
+
+      <div class="row">
+        <span class="label">Free Fire UID</span>
+        <span class="value" id="infoUid">Not Set</span>
+      </div>
+
+      <div class="row">
+        <span class="label">Account Status</span>
+        <span class="value">✅ Active</span>
+      </div>
+
+      <div class="row">
+        <span class="label">Tournament Rank</span>
+        <span class="value">Not Ranked</span>
+      </div>
+
+    </div>
+
+
+    <a href="index.html" class="home-btn">
+      🏠 Back to Home
+    </a>
+
+  </div>
+
+
+  <script>
+
+    /*
+      P12 PLAYER PROFILE
+      Demo data for now.
+      Later this can be connected to Supabase.
+    */
+
+    const player = {
+      name: "SB Player",
+      uid: "Not Set",
+      matches: 0,
+      wins: 0,
+      points: 0
+    };
+
+
+    document.getElementById("playerName").textContent =
+      player.name;
+
+    document.getElementById("playerUid").textContent =
+      player.uid;
+
+    document.getElementById("infoName").textContent =
+      player.name;
+
+    document.getElementById("infoUid").textContent =
+      player.uid;
+
+    document.getElementById("matches").textContent =
+      player.matches;
+
+    document.getElementById("wins").textContent =
+      player.wins;
+
+    document.getElementById("points").textContent =
+      player.points;
+
+  </script>
+
+</body>
+  </html>
