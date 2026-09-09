@@ -1,8 +1,7 @@
 <!DOCTYPE html><html lang="bn">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SB Tournament - Match Management</title><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><style>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>SB Tournament - Match Management</title><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><style>
 *{
     box-sizing:border-box;
     margin:0;
@@ -54,7 +53,8 @@ label{
     font-weight:bold;
 }
 
-input,select{
+input,
+select{
     width:100%;
     padding:12px;
     border:1px solid #ddd;
@@ -76,6 +76,11 @@ button{
     width:100%;
 }
 
+.add-btn:disabled{
+    opacity:.6;
+    cursor:not-allowed;
+}
+
 .match{
     border:1px solid #e5e7eb;
     border-radius:12px;
@@ -90,6 +95,7 @@ button{
 .info{
     line-height:1.8;
     color:#555;
+    margin-top:10px;
 }
 
 .actions{
@@ -111,59 +117,126 @@ button{
 
 .status{
     display:inline-block;
-    background:#fff7ed;
-    color:#c2410c;
     padding:5px 10px;
     border-radius:20px;
     font-size:13px;
     font-weight:bold;
 }
 
-.empty{
+.upcoming{
+    background:#fff7ed;
+    color:#c2410c;
+}
+
+.live{
+    background:#dcfce7;
+    color:#15803d;
+}
+
+.completed{
+    background:#e5e7eb;
+    color:#374151;
+}
+
+.empty,
+.loading,
+.error{
     text-align:center;
-    color:#777;
     padding:20px;
 }
 
+.empty{
+    color:#777;
+}
+
 .loading{
-    text-align:center;
-    padding:20px;
     color:#555;
+}
+
+.error{
+    color:#dc2626;
 }
 </style></head><body><div class="header">
     <h1>🏆 SB Tournament</h1>
     <p>P5 — Match Management</p>
 </div><div class="container"><div class="card">
-<h2>➕ Create New Match</h2><div class="form-group">
-<label>Tournament Name</label>
-<input id="tournament" type="text" placeholder="যেমন: SB Free Fire Cup">
-</div><div class="form-group">
-<label>Match Date</label>
-<input id="date" type="date">
-</div><div class="form-group">
-<label>Match Time</label>
-<input id="time" type="time">
-</div><div class="form-group">
-<label>Room ID</label>
-<input id="room" type="text" placeholder="Room ID">
-</div><div class="form-group">
-<label>Room Password</label>
-<input id="password" type="text" placeholder="Room Password">
-</div><div class="form-group">
-<label>Status</label>
-<select id="status">
-<option value="Upcoming">Upcoming</option>
-<option value="Live">Live</option>
-<option value="Completed">Completed</option>
-</select>
-</div><button class="add-btn" onclick="addMatch()">
-Create Match
-</button></div><div class="card">
-<h2>📋 Match List</h2>
-<div id="matchList">
-<div class="loading">Loading matches...</div>
+
+    <h2>➕ Create New Match</h2>
+
+    <div class="form-group">
+        <label>Tournament Name</label>
+        <input
+            id="tournament"
+            type="text"
+            placeholder="যেমন: SB Free Fire Cup">
+    </div>
+
+    <div class="form-group">
+        <label>Match Date</label>
+        <input id="date" type="date">
+    </div>
+
+    <div class="form-group">
+        <label>Match Time</label>
+        <input id="time" type="time">
+    </div>
+
+    <div class="form-group">
+        <label>Room ID</label>
+        <input
+            id="room"
+            type="text"
+            placeholder="Room ID">
+    </div>
+
+    <div class="form-group">
+        <label>Room Password</label>
+        <input
+            id="password"
+            type="text"
+            placeholder="Room Password">
+    </div>
+
+    <div class="form-group">
+        <label>Status</label>
+
+        <select id="status">
+            <option value="Upcoming">Upcoming</option>
+            <option value="Live">Live</option>
+            <option value="Completed">Completed</option>
+        </select>
+
+    </div>
+
+    <button
+        id="createBtn"
+        class="add-btn"
+        onclick="addMatch()">
+
+        Create Match
+
+    </button>
+
 </div>
-</div></div><script>
+
+
+<div class="card">
+
+    <h2>📋 Match List</h2>
+
+    <div id="matchList">
+        <div class="loading">
+            Match loading...
+        </div>
+    </div>
+
+</div>
+
+</div><script>
+
+/* =========================
+   SUPABASE CONFIG
+========================= */
 
 const SUPABASE_URL =
 "https://ofcpuiubovcjxucqynyw.supabase.co";
@@ -172,10 +245,15 @@ const SUPABASE_KEY =
 "sb_publishable_NpG4P_VRdesJJkkzuBoanw_mbM3ivFS";
 
 const supabaseClient =
-supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+);
 
 
-/* LOAD MATCHES */
+/* =========================
+   LOAD MATCHES
+========================= */
 
 async function loadMatches(){
 
@@ -183,74 +261,111 @@ async function loadMatches(){
         document.getElementById("matchList");
 
     list.innerHTML =
-        `<div class="loading">Loading matches...</div>`;
+        `<div class="loading">
+            Match loading...
+        </div>`;
+
 
     const { data, error } =
         await supabaseClient
         .from("matches")
         .select("*")
-        .order("id", { ascending:false });
+        .order("id", {
+            ascending:false
+        });
+
 
     if(error){
 
         console.error(error);
 
         list.innerHTML =
-        `<div class="empty">
-            Match load করতে সমস্যা হয়েছে।<br>
-            Table name এবং columns check করুন।
+        `<div class="error">
+            ❌ Match load করা যায়নি।<br><br>
+            ${escapeHTML(error.message)}
         </div>`;
 
         return;
     }
 
+
     renderMatches(data || []);
 }
 
 
-/* ADD MATCH */
+/* =========================
+   CREATE MATCH
+========================= */
 
 async function addMatch(){
 
     const tournament =
-        document.getElementById("tournament").value.trim();
+        document
+        .getElementById("tournament")
+        .value
+        .trim();
 
     const date =
-        document.getElementById("date").value;
+        document
+        .getElementById("date")
+        .value;
 
     const time =
-        document.getElementById("time").value;
+        document
+        .getElementById("time")
+        .value;
 
     const room =
-        document.getElementById("room").value.trim();
+        document
+        .getElementById("room")
+        .value
+        .trim();
 
     const password =
-        document.getElementById("password").value.trim();
+        document
+        .getElementById("password")
+        .value
+        .trim();
 
     const status =
-        document.getElementById("status").value;
+        document
+        .getElementById("status")
+        .value;
 
 
-    if(!tournament || !date || !time || !room || !password){
+    if(
+        !tournament ||
+        !date ||
+        !time ||
+        !room ||
+        !password
+    ){
 
-        alert("সব তথ্য পূরণ করুন।");
+        alert("⚠️ সব তথ্য পূরণ করুন।");
         return;
     }
+
+
+    const button =
+        document.getElementById("createBtn");
+
+    button.disabled = true;
+    button.innerText = "Saving...";
 
 
     const { error } =
         await supabaseClient
         .from("matches")
-        .insert([{
-
-            tournament: tournament,
-            date: date,
-            time: time,
-            room: room,
-            password: password,
-            status: status
-
-        }]);
+        .insert([
+            {
+                tournament: tournament,
+                date: date,
+                time: time,
+                room: room,
+                password: password,
+                status: status
+            }
+        ]);
 
 
     if(error){
@@ -258,8 +373,12 @@ async function addMatch(){
         console.error(error);
 
         alert(
-            "Match save হয়নি। Supabase table/column check করুন।"
+            "❌ Match save হয়নি:\n" +
+            error.message
         );
+
+        button.disabled = false;
+        button.innerText = "Create Match";
 
         return;
     }
@@ -268,21 +387,47 @@ async function addMatch(){
     alert("✅ Match successfully created!");
 
 
-    document.getElementById("tournament").value="";
-    document.getElementById("date").value="";
-    document.getElementById("time").value="";
-    document.getElementById("room").value="";
-    document.getElementById("password").value="";
+    document
+        .getElementById("tournament")
+        .value = "";
+
+    document
+        .getElementById("date")
+        .value = "";
+
+    document
+        .getElementById("time")
+        .value = "";
+
+    document
+        .getElementById("room")
+        .value = "";
+
+    document
+        .getElementById("password")
+        .value = "";
+
+
+    button.disabled = false;
+    button.innerText = "Create Match";
+
 
     loadMatches();
 }
 
 
-/* DELETE MATCH */
+/* =========================
+   DELETE MATCH
+========================= */
 
 async function deleteMatch(id){
 
-    if(!confirm("এই ম্যাচটি Delete করতে চান?")){
+    const ok =
+        confirm(
+            "এই ম্যাচটি Delete করতে চান?"
+        );
+
+    if(!ok){
         return;
     }
 
@@ -298,18 +443,24 @@ async function deleteMatch(id){
 
         console.error(error);
 
-        alert("Match delete করা যায়নি।");
+        alert(
+            "❌ Match delete করা যায়নি:\n" +
+            error.message
+        );
+
         return;
     }
 
 
-    alert("Match deleted.");
+    alert("✅ Match deleted!");
 
     loadMatches();
 }
 
 
-/* COPY */
+/* =========================
+   COPY TEXT
+========================= */
 
 async function copyText(text){
 
@@ -317,16 +468,20 @@ async function copyText(text){
 
         await navigator.clipboard.writeText(text);
 
-        alert("Copied!");
+        alert("✅ Copied!");
 
     }catch(error){
 
-        alert("Copy করা যায়নি।");
+        alert(
+            "Copy করা যায়নি।"
+        );
     }
 }
 
 
-/* DISPLAY */
+/* =========================
+   RENDER MATCHES
+========================= */
 
 function renderMatches(matches){
 
@@ -346,66 +501,96 @@ function renderMatches(matches){
 
 
     list.innerHTML =
-        matches.map(match => `
+        matches.map(match => {
 
-        <div class="match">
+            let statusClass = "upcoming";
 
-            <h3>
-                🏆 ${escapeHTML(match.tournament)}
-            </h3>
+            if(match.status === "Live"){
+                statusClass = "live";
+            }
 
-            <span class="status">
-                ${escapeHTML(match.status)}
-            </span>
+            if(match.status === "Completed"){
+                statusClass = "completed";
+            }
 
-            <div class="info">
 
-                📅 Date:
-                ${escapeHTML(match.date)}
-                <br>
+            return `
 
-                🕐 Time:
-                ${escapeHTML(match.time)}
-                <br>
+            <div class="match">
 
-                🔑 Room ID:
-                ${escapeHTML(match.room)}
-                <br>
+                <h3>
+                    🏆
+                    ${escapeHTML(match.tournament)}
+                </h3>
 
-                🔒 Password:
-                ${escapeHTML(match.password)}
+                <span class="status ${statusClass}">
+                    ${escapeHTML(match.status)}
+                </span>
+
+                <div class="info">
+
+                    📅 Date:
+                    ${escapeHTML(match.date)}
+
+                    <br>
+
+                    🕐 Time:
+                    ${escapeHTML(match.time)}
+
+                    <br>
+
+                    🔑 Room ID:
+                    ${escapeHTML(match.room)}
+
+                    <br>
+
+                    🔒 Password:
+                    ${escapeHTML(match.password)}
+
+                </div>
+
+
+                <div class="actions">
+
+                    <button
+                        class="copy"
+                        onclick="copyText('${safeJS(match.room)}')">
+
+                        Copy Room ID
+
+                    </button>
+
+
+                    <button
+                        class="copy"
+                        onclick="copyText('${safeJS(match.password)}')">
+
+                        Copy Password
+
+                    </button>
+
+
+                    <button
+                        class="delete"
+                        onclick="deleteMatch(${match.id})">
+
+                        Delete
+
+                    </button>
+
+                </div>
 
             </div>
 
-            <div class="actions">
+            `;
 
-                <button
-                    class="copy"
-                    onclick="copyText('${safeJS(match.room)}')">
-                    Copy Room ID
-                </button>
-
-                <button
-                    class="copy"
-                    onclick="copyText('${safeJS(match.password)}')">
-                    Copy Password
-                </button>
-
-                <button
-                    class="delete"
-                    onclick="deleteMatch(${match.id})">
-                    Delete
-                </button>
-
-            </div>
-
-        </div>
-
-    `).join("");
+        }).join("");
 }
 
 
-/* SECURITY */
+/* =========================
+   SECURITY
+========================= */
 
 function escapeHTML(text){
 
@@ -422,11 +607,15 @@ function safeJS(text){
 
     return String(text ?? "")
         .replace(/\\/g,"\\\\")
-        .replace(/'/g,"\\'");
+        .replace(/'/g,"\\'")
+        .replace(/\r/g,"\\r")
+        .replace(/\n/g,"\\n");
 }
 
 
-/* START */
+/* =========================
+   START
+========================= */
 
 loadMatches();
 
