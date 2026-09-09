@@ -1,11 +1,8 @@
-<!DOCTYPE html>
-<html lang="bn">
+<!DOCTYPE html><html lang="bn">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SB Tournament - Match Management</title>
-
-<style>
+<title>SB Tournament - Match Management</title><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><style>
 *{
     box-sizing:border-box;
     margin:0;
@@ -127,87 +124,93 @@ button{
     color:#777;
     padding:20px;
 }
-</style>
-</head>
 
-<body>
-
-<div class="header">
+.loading{
+    text-align:center;
+    padding:20px;
+    color:#555;
+}
+</style></head><body><div class="header">
     <h1>🏆 SB Tournament</h1>
-    <p>P7 — Match Management</p>
+    <p>P5 — Match Management</p>
+</div><div class="container"><div class="card">
+<h2>➕ Create New Match</h2><div class="form-group">
+<label>Tournament Name</label>
+<input id="tournament" type="text" placeholder="যেমন: SB Free Fire Cup">
+</div><div class="form-group">
+<label>Match Date</label>
+<input id="date" type="date">
+</div><div class="form-group">
+<label>Match Time</label>
+<input id="time" type="time">
+</div><div class="form-group">
+<label>Room ID</label>
+<input id="room" type="text" placeholder="Room ID">
+</div><div class="form-group">
+<label>Room Password</label>
+<input id="password" type="text" placeholder="Room Password">
+</div><div class="form-group">
+<label>Status</label>
+<select id="status">
+<option value="Upcoming">Upcoming</option>
+<option value="Live">Live</option>
+<option value="Completed">Completed</option>
+</select>
+</div><button class="add-btn" onclick="addMatch()">
+Create Match
+</button></div><div class="card">
+<h2>📋 Match List</h2>
+<div id="matchList">
+<div class="loading">Loading matches...</div>
 </div>
+</div></div><script>
 
-<div class="container">
+const SUPABASE_URL =
+"https://ofcpuiubovcjxucqynyw.supabase.co";
 
-    <div class="card">
-        <h2>➕ Create New Match</h2>
+const SUPABASE_KEY =
+"sb_publishable_NpG4P_VRdesJJkkzuBoanw_mbM3ivFS";
 
-        <div class="form-group">
-            <label>Tournament Name</label>
-            <input id="tournament" type="text"
-                   placeholder="যেমন: SB Free Fire Cup">
-        </div>
-
-        <div class="form-group">
-            <label>Match Date</label>
-            <input id="date" type="date">
-        </div>
-
-        <div class="form-group">
-            <label>Match Time</label>
-            <input id="time" type="time">
-        </div>
-
-        <div class="form-group">
-            <label>Room ID</label>
-            <input id="room" type="text"
-                   placeholder="Room ID">
-        </div>
-
-        <div class="form-group">
-            <label>Room Password</label>
-            <input id="password" type="text"
-                   placeholder="Room Password">
-        </div>
-
-        <div class="form-group">
-            <label>Status</label>
-            <select id="status">
-                <option value="Upcoming">Upcoming</option>
-                <option value="Live">Live</option>
-                <option value="Completed">Completed</option>
-            </select>
-        </div>
-
-        <button class="add-btn" onclick="addMatch()">
-            Create Match
-        </button>
-    </div>
+const supabaseClient =
+supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 
-    <div class="card">
-        <h2>📋 Match List</h2>
-        <div id="matchList"></div>
-    </div>
+/* LOAD MATCHES */
 
-</div>
+async function loadMatches(){
 
+    const list =
+        document.getElementById("matchList");
 
-<script>
+    list.innerHTML =
+        `<div class="loading">Loading matches...</div>`;
 
-let matches =
-JSON.parse(localStorage.getItem("sb_matches")) || [];
+    const { data, error } =
+        await supabaseClient
+        .from("matches")
+        .select("*")
+        .order("id", { ascending:false });
 
+    if(error){
 
-function saveMatches(){
-    localStorage.setItem(
-        "sb_matches",
-        JSON.stringify(matches)
-    );
+        console.error(error);
+
+        list.innerHTML =
+        `<div class="empty">
+            Match load করতে সমস্যা হয়েছে।<br>
+            Table name এবং columns check করুন।
+        </div>`;
+
+        return;
+    }
+
+    renderMatches(data || []);
 }
 
 
-function addMatch(){
+/* ADD MATCH */
+
+async function addMatch(){
 
     const tournament =
         document.getElementById("tournament").value.trim();
@@ -235,23 +238,35 @@ function addMatch(){
     }
 
 
-    const match = {
+    const { error } =
+        await supabaseClient
+        .from("matches")
+        .insert([{
 
-        id: Date.now(),
+            tournament: tournament,
+            date: date,
+            time: time,
+            room: room,
+            password: password,
+            status: status
 
-        tournament,
-        date,
-        time,
-        room,
-        password,
-        status
-
-    };
+        }]);
 
 
-    matches.unshift(match);
+    if(error){
 
-    saveMatches();
+        console.error(error);
+
+        alert(
+            "Match save হয়নি। Supabase table/column check করুন।"
+        );
+
+        return;
+    }
+
+
+    alert("✅ Match successfully created!");
+
 
     document.getElementById("tournament").value="";
     document.getElementById("date").value="";
@@ -259,34 +274,61 @@ function addMatch(){
     document.getElementById("room").value="";
     document.getElementById("password").value="";
 
-    renderMatches();
+    loadMatches();
 }
 
 
-function deleteMatch(id){
+/* DELETE MATCH */
+
+async function deleteMatch(id){
 
     if(!confirm("এই ম্যাচটি Delete করতে চান?")){
         return;
     }
 
-    matches =
-        matches.filter(match => match.id !== id);
 
-    saveMatches();
+    const { error } =
+        await supabaseClient
+        .from("matches")
+        .delete()
+        .eq("id", id);
 
-    renderMatches();
+
+    if(error){
+
+        console.error(error);
+
+        alert("Match delete করা যায়নি।");
+        return;
+    }
+
+
+    alert("Match deleted.");
+
+    loadMatches();
 }
 
 
-function copyText(text){
+/* COPY */
 
-    navigator.clipboard.writeText(text);
+async function copyText(text){
 
-    alert("Copied!");
+    try{
+
+        await navigator.clipboard.writeText(text);
+
+        alert("Copied!");
+
+    }catch(error){
+
+        alert("Copy করা যায়নি।");
+    }
 }
 
 
-function renderMatches(){
+/* DISPLAY */
+
+function renderMatches(matches){
 
     const list =
         document.getElementById("matchList");
@@ -295,9 +337,9 @@ function renderMatches(){
     if(matches.length === 0){
 
         list.innerHTML =
-            `<div class="empty">
-                এখনো কোনো Match তৈরি করা হয়নি।
-             </div>`;
+        `<div class="empty">
+            এখনো কোনো Match তৈরি করা হয়নি।
+        </div>`;
 
         return;
     }
@@ -308,7 +350,9 @@ function renderMatches(){
 
         <div class="match">
 
-            <h3>🏆 ${escapeHTML(match.tournament)}</h3>
+            <h3>
+                🏆 ${escapeHTML(match.tournament)}
+            </h3>
 
             <span class="status">
                 ${escapeHTML(match.status)}
@@ -332,7 +376,6 @@ function renderMatches(){
                 ${escapeHTML(match.password)}
 
             </div>
-
 
             <div class="actions">
 
@@ -362,9 +405,11 @@ function renderMatches(){
 }
 
 
+/* SECURITY */
+
 function escapeHTML(text){
 
-    return String(text)
+    return String(text ?? "")
         .replace(/&/g,"&amp;")
         .replace(/</g,"&lt;")
         .replace(/>/g,"&gt;")
@@ -375,15 +420,15 @@ function escapeHTML(text){
 
 function safeJS(text){
 
-    return String(text)
+    return String(text ?? "")
         .replace(/\\/g,"\\\\")
         .replace(/'/g,"\\'");
 }
 
 
-renderMatches();
+/* START */
 
-</script>
+loadMatches();
 
-</body>
-</html>
+</script></body>
+    </html>
